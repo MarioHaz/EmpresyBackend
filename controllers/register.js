@@ -236,7 +236,9 @@ exports.getProfile = async (req, res) => {
     if (!profile) {
       return res.json({ ok: false });
     }
-    const post = await Post.find({ user: profile._id }).populate("user");
+    const post = await Post.find({ user: profile._id })
+      .populate("user")
+      .sort({ createdAt: -1 });
     res.json({ ...profile.toObject(), post });
   } catch (error) {
     res.status(500).json({ message: error.message });
