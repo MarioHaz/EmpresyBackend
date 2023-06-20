@@ -81,32 +81,16 @@ const userSchema = mongoose.Schema(
       bio: {
         type: String,
       },
-      otherName: {
+
+      webpage: {
         type: String,
       },
-      job: {
+
+      Economic_Sector: {
         type: String,
       },
-      workPlace: {
-        type: String,
-      },
-      highSchool: {
-        type: String,
-      },
-      college: {
-        type: String,
-      },
+
       currentCity: {
-        type: String,
-      },
-      homeTown: {
-        type: String,
-      },
-      relationship: {
-        type: String,
-        enum: ["Single", "in a relationship", "Married", "Divorced"],
-      },
-      highSchool: {
         type: String,
       },
     },
