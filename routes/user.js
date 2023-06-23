@@ -13,6 +13,8 @@ const {
   updateProfilePicture,
   updateCover,
   updateAbout,
+  addFriend,
+  cancelRequest,
 } = require("../controllers/register");
 const { authUser } = require("../middlewares/auth");
 
@@ -30,5 +32,7 @@ router.get("/getProfile/:username", authUser, getProfile);
 router.put("/updateProfilePicture", authUser, updateProfilePicture);
 router.put("/updateCover", authUser, updateCover);
 router.put("/updateAbout", authUser, updateAbout);
+router.put("/addFriend/:id", authUser, addFriend);
+router.put("/cancelRequest/:id", authUser, cancelRequest);
 
 module.exports = router;
