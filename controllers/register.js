@@ -1,4 +1,4 @@
-const { sendVerificationEmail, sendResetCode } = require("../helpers/mailer");
+const { sendEmail } = require("../helpers/mailer");
 const { generateToken } = require("../helpers/tokens");
 const {
   validateEmail,
@@ -11,6 +11,62 @@ const Code = require("../models/Code");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const generateCode = require("../helpers/generateCode");
+
+verificationTemplate = (user) => {
+  const emailVerificationToken = generateToken(
+    { id: user._id.toString() },
+    "24h"
+  );
+
+  const url = `${process.env.BASE_URL}/activate/${emailVerificationToken}`;
+  return `
+  <div style="display:flex; margin-bottom:1rem; max-width:7; align-items:center; gap:10px; font-family:sans-serif; font-weight:600; color:#398ad5">
+    <img width="170px" src="https://res.cloudinary.com/danfiejkv/image/upload/v1681770032/Logo-empresy-web_djmfw2.png" alt="">
+    <span>
+      <strong>Acción requerida: Activa tu cuenta de Empresy</strong>
+    </span>
+  </div>
+
+  <div style="padding:1rem 0; border-top:1px solid #e5e5e5; border-bottom:1px solid #e5e5e5; color:#141823; font-size:17px; font-family:sans-serif">
+    <span>Hola ${user.company_Name}</span>
+
+    <div style="padding:20px 0">
+      <span style="padding:1.5rem 0">
+        Recientemente has creado una cuenta en Empresy. Para completar tu registro, por favor confirma tu cuenta.
+      </span>
+    </div>
+
+    <a href=${url} style="width:200px; padding:10px 15px; background:#398ad5; color:#fff; text-decoration:none; font-weight:600; border-radius:10px">
+      Confirma tu cuenta
+    </a><br>
+
+    <div style="padding-top:20px">
+      <span style="margin:1.5rem 0; color:#898f9c">
+        Empresy te permite mantener contacto con otras empresas. Una vez registrado en Empresy, podrás compartir tus productos, contactos de proveedores y mucho más.
+      </span>
+    </div>
+  </div>`;
+}
+
+resetPasswordTemplate = (userName, code) => {
+  return `
+    <div style="display: flex; margin-bottom: 1rem; max-width: 7; align-items: center; gap: 10px; font-family: sans-serif; font-weight: 600; color: #398ad5">
+      <img width="170px" src="https://res.cloudinary.com/danfiejkv/image/upload/v1681770032/Logo-empresy-web_djmfw2.png" alt="">
+      <span><strong>Código de restablecimiento de contraseña</strong></span>
+    </div>
+    <div style="padding: 1rem 0; border-top: 1px solid #e5e5e5; border-bottom: 1px solid #e5e5e5; color: #141823; font-size: 17px; font-family: sans-serif">
+      <span>Hola ${userName}</span>
+      <div style="padding: 20px 0">
+        <span style="padding: 1.5rem 0">Aquí tienes tu código de verificación. Sigue las instrucciones para restablecer tu contraseña.</span>
+      </div>
+      <a style="width: 200px; padding: 10px 15px; background: #398ad5; color: #fff; text-decoration: none; font-weight: 600; border-radius: 10px">${code}</a><br>
+      <div style="padding-top: 20px">
+        <span style="margin: 1.5rem 0; color: #898f9c">Empresy te permite estar en contacto con otras empresas. Una vez registrado en empresy, podrás compartir tus productos, contactar proveedores y mucho más.</span>
+      </div>
+    </div>
+  `;
+}
+
 exports.register = async (req, res) => {
   try {
     const {
@@ -64,13 +120,7 @@ exports.register = async (req, res) => {
       Economic_Sector: Economic_Sector,
       phone_number: phone_number,
     }).save();
-    const emailVerificationToken = generateToken(
-      { id: user._id.toString() },
-      "24h"
-    );
-    const url = `${process.env.BASE_URL}/activate/${emailVerificationToken}`;
-    sendVerificationEmail(user.email, user.company_Name, url);
-
+    sendEmail(user.email, 'Empresy - Verificación de correo electronico', verificationTemplate(user));
     const token = generateToken({ id: user._id.toString() }, "7d");
     res.send({
       id: user._id,
@@ -84,6 +134,7 @@ exports.register = async (req, res) => {
       message: "Register Succes! Please activate your email to start",
     });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -152,12 +203,8 @@ exports.sendVerification = async (req, res) => {
         message: "This user is already activated",
       });
     }
-    const emailVerificationToken = generateToken(
-      { id: user._id.toString() },
-      "24h"
-    );
-    const url = `${process.env.BASE_URL}/activate/${emailVerificationToken}`;
-    sendVerificationEmail(user.email, user.company_Name, url);
+
+    sendEmail(user.email, 'Empresy - Verificación de correo electronico', verificationTemplate(user));
     return res.status(200).json({
       message: "Email verification link has been sent to your email",
     });
@@ -193,7 +240,7 @@ exports.sendResetPasswordCode = async (req, res) => {
       code,
       user: user._id,
     }).save();
-    sendResetCode(user.email, user.company_Name, code);
+    sendEmail(user.email, 'Empresy - Re-establece tu contraseña', resetPasswordTemplate(user.company_Name, code));
     return res.status(200).json({
       message: "Email reset code has been sent to your email",
     });
@@ -220,7 +267,7 @@ exports.validateResetCode = async (req, res) => {
 
 exports.changePassword = async (req, res) => {
   const { email, password } = req.body;
-  const cryptedPassword = await bcrypt.hash(password, 12);
+  const cryptedPassword = await bcrypt.hash(password, 12); // TODO: revisar si tiene salt.
   await User.findOneAndUpdate(
     { email },
     {
