@@ -293,6 +293,7 @@ exports.getProfile = async (req, res) => {
     const { username } = req.params;
     const user = await User.findById(req.user.id);
     const profile = await User.findOne({ username }).select("-password");
+
     const friendship = {
       friends: false,
       following: false,
@@ -321,7 +322,10 @@ exports.getProfile = async (req, res) => {
 
     const post = await Post.find({ user: profile._id })
       .populate("user")
+      .populate("comments.commentBy", "company_Name picture username commentAt")
       .sort({ createdAt: -1 });
+    await profile.populate("followers", "company_Name username picture");
+    await profile.populate("following", "company_Name username picture");
     res.json({ ...profile.toObject(), post, friendship });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -444,11 +448,9 @@ exports.follow = async (req, res) => {
           $push: { followers: sender._id },
         });
         await sender.updateOne({
-          $push: { following: sender._id },
-        });
-        await sender.updateOne({
           $push: { following: receiver._id },
         });
+
         res.json({ message: "Follow succes" });
       } else {
         return res.status(400).json({ message: "Already following" });

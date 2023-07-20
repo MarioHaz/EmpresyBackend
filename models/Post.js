@@ -25,7 +25,7 @@ const postSchema = new mongoose.Schema(
     },
     comments: [
       {
-        comments: {
+        comment: {
           type: String,
         },
         image: {
@@ -37,7 +37,7 @@ const postSchema = new mongoose.Schema(
         },
         commentAt: {
           type: Date,
-          default: new Date(),
+          required: true,
         },
       },
     ],
