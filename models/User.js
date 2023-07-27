@@ -108,9 +108,9 @@ const userSchema = mongoose.Schema(
           type: ObjectId,
           ref: "Post",
         },
-        saveAt: {
+        savedAt: {
           type: Date,
-          default: new Date(),
+          required: true,
         },
       },
     ],
