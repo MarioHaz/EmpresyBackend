@@ -47,6 +47,7 @@ const userSchema = mongoose.Schema(
       type: String,
       required: [true, "Economic Sector is required"],
       trim: true,
+      text: true,
     },
     verified: {
       type: Boolean,
@@ -93,6 +94,7 @@ const userSchema = mongoose.Schema(
     details: {
       bio: {
         type: String,
+        text: true,
       },
 
       webpage: {
@@ -101,10 +103,12 @@ const userSchema = mongoose.Schema(
 
       Economic_Sector: {
         type: String,
+        text: true,
       },
 
       currentCity: {
         type: String,
+        text: true,
       },
     },
     SavedPosts: [
