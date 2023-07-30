@@ -29,6 +29,10 @@ app.use(
     useTempFiles: true,
   })
 );
+app.use((req, res, next) => {
+  res.setHeader("Content-Security-Policy", "default-src 'self' trusted.com");
+  next();
+});
 //routes
 readdirSync("./routes").map((r) => app.use("/", require("./routes/" + r)));
 
