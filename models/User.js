@@ -65,6 +65,18 @@ const userSchema = mongoose.Schema(
         ref: "User",
       },
     ],
+    notificationFollowing: [
+      {
+        type: ObjectId,
+        ref: "User",
+      },
+    ],
+    notificationAll: [
+      {
+        type: ObjectId,
+        ref: "User",
+      },
+    ],
     followers: [
       {
         type: ObjectId,

@@ -325,6 +325,10 @@ exports.getProfile = async (req, res) => {
       .sort({ createdAt: -1 });
     await profile.populate("followers", "company_Name username picture");
     await profile.populate("following", "company_Name username picture");
+    await profile.populate(
+      "notificationFollowing",
+      "company_Name username picture"
+    );
     res.json({ ...profile.toObject(), post, friendship });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -445,6 +449,12 @@ exports.follow = async (req, res) => {
       ) {
         await receiver.updateOne({
           $push: { followers: sender._id },
+        });
+        await receiver.updateOne({
+          $push: { notificationFollowing: sender._id },
+        });
+        await receiver.updateOne({
+          $push: { notificationAll: sender._id },
         });
         await sender.updateOne({
           $push: { following: receiver._id },
