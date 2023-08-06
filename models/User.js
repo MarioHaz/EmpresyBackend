@@ -72,6 +72,12 @@ const userSchema = mongoose.Schema(
         ref: "User",
       },
     ],
+    notifications: [
+      {
+        type: ObjectId,
+        ref: "User",
+      },
+    ],
     requests: [
       {
         type: ObjectId,

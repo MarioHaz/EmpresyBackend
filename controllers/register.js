@@ -325,6 +325,7 @@ exports.getProfile = async (req, res) => {
       .sort({ createdAt: -1 });
     await profile.populate("followers", "company_Name username picture");
     await profile.populate("following", "company_Name username picture");
+    await profile.populate("notifications", "company_Name username picture");
     res.json({ ...profile.toObject(), post, friendship });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -445,6 +446,9 @@ exports.follow = async (req, res) => {
       ) {
         await receiver.updateOne({
           $push: { followers: sender._id },
+        });
+        await receiver.updateOne({
+          $push: { notifications: sender._id },
         });
         await sender.updateOne({
           $push: { following: receiver._id },
@@ -667,6 +671,20 @@ exports.getSearchHistory = async (req, res) => {
   }
 };
 exports.removeFromSearch = async (req, res) => {
+  try {
+    const { searchUser } = req.body;
+    await User.updateOne(
+      {
+        _id: req.user.id,
+      },
+      { $pull: { search: { user: searchUser } } }
+    );
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.removeNotifications = async (req, res) => {
   try {
     const { searchUser } = req.body;
     await User.updateOne(
