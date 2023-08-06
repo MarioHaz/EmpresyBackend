@@ -619,14 +619,21 @@ exports.deleteRequest = async (req, res) => {
 exports.search = async (req, res) => {
   try {
     const searchTerm = req.params.searchTerm;
-    const results = await User.find({ $text: { $search: searchTerm } }).select(
-      "company_Name picture username"
-    );
+    const regex = new RegExp(searchTerm, "i"); // Create a case-insensitive regex
+    const results = await User.find({
+      $or: [
+        { company_Name: { $regex: regex } }, // Search by company_Name
+        { Economic_Sector: { $regex: regex } }, // Search by company_Name
+        { "details.bio": { $regex: regex } }, // Search by company_Name
+        { "details.currentCity": { $regex: regex } }, // Search by company_Name
+      ],
+    }).select("company_Name picture username");
     res.json(results);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
 exports.addToSearchHistory = async (req, res) => {
   try {
     const { searchUser } = req.body;
@@ -670,6 +677,20 @@ exports.getSearchHistory = async (req, res) => {
   }
 };
 exports.removeFromSearch = async (req, res) => {
+  try {
+    const { searchUser } = req.body;
+    await User.updateOne(
+      {
+        _id: req.user.id,
+      },
+      { $pull: { search: { user: searchUser } } }
+    );
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.removeNotifications = async (req, res) => {
   try {
     const { searchUser } = req.body;
     await User.updateOne(
