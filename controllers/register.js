@@ -329,6 +329,7 @@ exports.getProfile = async (req, res) => {
       "notificationFollowing",
       "company_Name username picture"
     );
+    await profile.populate("notificationAll", "company_Name username picture");
     res.json({ ...profile.toObject(), post, friendship });
   } catch (error) {
     res.status(500).json({ message: error.message });

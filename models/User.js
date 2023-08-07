@@ -72,6 +72,12 @@ const userSchema = mongoose.Schema(
         ref: "User",
       },
     ],
+    notificationComment: [
+      {
+        type: ObjectId,
+        ref: "User",
+      },
+    ],
     notificationAll: [
       {
         type: ObjectId,
