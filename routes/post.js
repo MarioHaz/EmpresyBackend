@@ -5,6 +5,7 @@ const {
   comment,
   savePost,
   deletePost,
+  visitorPosts,
 } = require("../controllers/post");
 const { authUser } = require("../middlewares/auth");
 
@@ -15,5 +16,6 @@ router.get("/getAllPosts", authUser, getAllPosts);
 router.put("/comment", authUser, comment);
 router.put("/savePost/:id", authUser, savePost);
 router.delete("/deletePost/:id", authUser, deletePost);
+router.get("/visitorPosts", visitorPosts);
 
 module.exports = router;

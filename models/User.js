@@ -68,14 +68,40 @@ const userSchema = mongoose.Schema(
     ],
     notificationFollowing: [
       {
-        type: ObjectId,
-        ref: "User",
+        type: {
+          type: String,
+          enum: ["following"],
+          required: true,
+        },
+        user: {
+          type: ObjectId,
+          ref: "User",
+        },
+        createdAt: {
+          type: Date,
+          required: true,
+        },
       },
     ],
     notificationComment: [
       {
-        type: ObjectId,
-        ref: "User",
+        type: {
+          type: String,
+          enum: ["comment"],
+          required: true,
+        },
+        user: {
+          type: ObjectId,
+          ref: "User",
+        },
+        postId: {
+          type: ObjectId,
+          ref: "Post",
+        },
+        createdAt: {
+          type: Date,
+          required: true,
+        },
       },
     ],
     notificationAll: [

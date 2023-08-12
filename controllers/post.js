@@ -64,7 +64,24 @@ exports.getAllPosts = async (req, res) => {
 exports.comment = async (req, res) => {
   try {
     const { comment, image, postId } = req.body;
-
+    const post = await Post.findById(postId).populate("user");
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    await User.findByIdAndUpdate(post.user, {
+      $push: {
+        notificationComment: {
+          type: "comment", // Add the type to differentiate between notifications
+          user: req.user.id,
+          createdAt: new Date(),
+        },
+      },
+    });
+    await User.findByIdAndUpdate(post.user, {
+      $push: {
+        notificationAll: req.user.id,
+      },
+    });
     let newComments = await Post.findByIdAndUpdate(
       postId,
       {
@@ -121,6 +138,20 @@ exports.deletePost = async (req, res) => {
   try {
     await Post.findByIdAndRemove(req.params.id);
     res.json({ status: "ok" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+exports.visitorPosts = async (req, res) => {
+  try {
+    const visitorPosts = await Post.find()
+      .populate("user", "company_Name picture username cover Economic_Sector")
+      .populate("comments.commentBy", "company_Name username picture")
+      .sort({ createdAt: -1 })
+      .limit(10);
+
+    res.json(visitorPosts);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

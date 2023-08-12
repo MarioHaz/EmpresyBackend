@@ -326,10 +326,17 @@ exports.getProfile = async (req, res) => {
     await profile.populate("followers", "company_Name username picture");
     await profile.populate("following", "company_Name username picture");
     await profile.populate(
-      "notificationFollowing",
+      "notificationFollowing.user",
       "company_Name username picture"
     );
-    await profile.populate("notificationAll", "company_Name username picture");
+    await profile.populate(
+      "notificationAll",
+      "company_Name username picture type"
+    );
+    await profile.populate(
+      "notificationComment.user",
+      "company_Name username picture type"
+    );
     res.json({ ...profile.toObject(), post, friendship });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -452,7 +459,13 @@ exports.follow = async (req, res) => {
           $push: { followers: sender._id },
         });
         await receiver.updateOne({
-          $push: { notificationFollowing: sender._id },
+          $push: {
+            notificationFollowing: {
+              type: "following", // Add the type to differentiate between notifications
+              user: sender._id,
+              createdAt: new Date(),
+            },
+          },
         });
         await receiver.updateOne({
           $push: { notificationAll: sender._id },
@@ -693,13 +706,16 @@ exports.removeFromSearch = async (req, res) => {
 
 exports.removeNotifications = async (req, res) => {
   try {
-    const { searchUser } = req.body;
-    await User.updateOne(
-      {
-        _id: req.user.id,
-      },
-      { $pull: { search: { user: searchUser } } }
-    );
+    const user = await User.findById(req.user.id);
+    if (user.notificationAll && user.notificationAll.length > 0) {
+      // Update the 'notificationAll' array to an empty array for the user with the given ID.
+      await User.findByIdAndUpdate(
+        req.user.id,
+        { notificationAll: [] },
+        { new: true } // This option returns the updated user document after the update.
+      );
+    }
+    res.status(200).json({ message: "Notifications removed successfully." });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
