@@ -66,6 +66,23 @@ const userSchema = mongoose.Schema(
         ref: "User",
       },
     ],
+    notificationReact: [
+      {
+        type: {
+          type: String,
+          enum: ["react"],
+          required: true,
+        },
+        user: {
+          type: ObjectId,
+          ref: "User",
+        },
+        createdAt: {
+          type: Date,
+          required: true,
+        },
+      },
+    ],
     notificationFollowing: [
       {
         type: {

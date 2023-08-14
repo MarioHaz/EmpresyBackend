@@ -21,10 +21,12 @@ const {
   unfriend,
   deleteRequest,
   search,
+
   addToSearchHistory,
   getSearchHistory,
   removeFromSearch,
   removeNotifications,
+  searchVisitor,
 } = require("../controllers/register");
 const { authUser } = require("../middlewares/auth");
 
@@ -54,5 +56,6 @@ router.put("/addToSearchHistory", authUser, addToSearchHistory);
 router.get("/getSearchHistory", authUser, getSearchHistory);
 router.put("/removeFromSearch", authUser, removeFromSearch);
 router.put("/removeNotifications", authUser, removeNotifications);
+router.post("/searchVisitor/:searchTerm", searchVisitor);
 
 module.exports = router;

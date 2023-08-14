@@ -1,6 +1,8 @@
 const React = require("../models/React");
 const User = require("../models/User");
+const Post = require("../models/Post");
 const mongoose = require("mongoose");
+
 exports.reactPost = async (req, res) => {
   try {
     const { postId, react } = req.body;
@@ -8,6 +10,7 @@ exports.reactPost = async (req, res) => {
       postRef: postId,
       reactBy: req.user.id,
     });
+    const post = await Post.findById(postId);
 
     if (check == null) {
       const newReact = new React({
@@ -16,6 +19,21 @@ exports.reactPost = async (req, res) => {
         reactBy: req.user.id,
       });
       await newReact.save();
+
+      await User.findByIdAndUpdate(post.user, {
+        $push: {
+          notificationReact: {
+            type: "react", // Add the type to differentiate between notifications
+            user: req.user.id,
+            createdAt: new Date(),
+          },
+        },
+      });
+      await User.findByIdAndUpdate(post.user, {
+        $push: {
+          notificationAll: req.user.id,
+        },
+      });
     } else {
       if (check.react == react) {
         await React.findByIdAndRemove(check._id);

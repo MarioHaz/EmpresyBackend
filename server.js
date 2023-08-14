@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const fileUpload = require("express-fileupload");
 const dotenv = require("dotenv");
+const EventEmitter = require("events");
 dotenv.config();
 const { readdirSync } = require("fs");
 const app = express();
@@ -22,6 +23,8 @@ const app = express();
 // }
 // res(null, tmp);
 // }
+const eventEmitter = new EventEmitter();
+eventEmitter.setMaxListeners(20);
 app.use(express.json());
 app.use(cors());
 app.use(
