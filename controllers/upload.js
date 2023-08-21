@@ -43,6 +43,7 @@ const uploadToCloudinary = async (file, path) => {
       file.tempFilePath,
       {
         folder: path,
+        moderation: "webpurify",
       },
       (err, res) => {
         if (err) {
