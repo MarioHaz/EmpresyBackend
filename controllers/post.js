@@ -148,8 +148,7 @@ exports.visitorPosts = async (req, res) => {
     const visitorPosts = await Post.find()
       .populate("user", "company_Name picture username cover Economic_Sector")
       .populate("comments.commentBy", "company_Name username picture")
-      .sort({ createdAt: -1 })
-      .limit(10);
+      .sort({ createdAt: -1 });
 
     res.json(visitorPosts);
   } catch (error) {

@@ -135,6 +135,7 @@ exports.register = async (req, res) => {
       verified: user.verified,
       Economic_Sector: Economic_Sector,
       phone_number: phone_number,
+
       message: "Register Succes! Please activate your email to start",
     });
   } catch (error) {
@@ -183,6 +184,12 @@ exports.login = async (req, res) => {
       });
     }
     const token = generateToken({ id: user._id.toString() }, "7d");
+
+    await user.populate(
+      "notificationFollowing.user notificationAll notificationComment.user notificationReact.user",
+      "company_Name username picture"
+    );
+
     res.send({
       id: user._id,
       username: user.username,
@@ -192,6 +199,10 @@ exports.login = async (req, res) => {
       verified: user.verified,
       Economic_Sector: user.Economic_Sector,
       phone_number: user.phone_number,
+      notificationFollowing: user.notificationFollowing,
+      notificationAll: user.notificationAll,
+      notificationComment: user.notificationComment,
+      notificationReact: user.notificationReact,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -321,7 +332,10 @@ exports.getProfile = async (req, res) => {
 
     const post = await Post.find({ user: profile._id })
       .populate("user")
-      .populate("comments.commentBy", "company_Name picture username commentAt")
+      .populate(
+        "comments.commentBy",
+        "company_Name picture username commentAt "
+      )
       .sort({ createdAt: -1 });
     await profile.populate("followers", "company_Name username picture");
     await profile.populate("following", "company_Name username picture");
@@ -738,6 +752,28 @@ exports.removeNotifications = async (req, res) => {
       );
     }
     res.status(200).json({ message: "Notifications removed successfully." });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getFollowers = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id)
+      .select("followers")
+      .populate("followers", "company_Name username picture");
+    res.json(user.followers);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getNotifications = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id)
+      .select("notificationAll")
+      .populate("notificationAll", "company_Name username picture");
+    res.json(user.notificationAll);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
