@@ -11,6 +11,7 @@ const Code = require("../models/Code");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const generateCode = require("../helpers/generateCode");
+const mongoose = require("mongoose");
 
 verificationTemplate = (user) => {
   const emailVerificationToken = generateToken(
@@ -657,9 +658,10 @@ exports.search = async (req, res) => {
         { company_Name: { $regex: regex } }, // Search by company_Name
         { Economic_Sector: { $regex: regex } }, // Search by company_Name
         { "details.bio": { $regex: regex } }, // Search by company_Name
-        { "details.currentCity": { $regex: regex } }, // Search by company_Name
       ],
-    }).select("company_Name picture username");
+    })
+      .select("company_Name picture username")
+      .populate("details.currentCity");
     res.json(results);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -760,9 +762,18 @@ exports.removeNotifications = async (req, res) => {
 exports.getFollowers = async (req, res) => {
   try {
     const user = await User.findById(req.user.id)
-      .select("followers")
-      .populate("followers", "company_Name username picture");
-    res.json(user.followers);
+      .select("followers following Economic_Sector")
+      .populate("followers", "company_Name username picture")
+      .populate("following", "company_Name username picture");
+    const similarSector = await User.find({
+      Economic_Sector: user.Economic_Sector,
+    }).select("company_Name username picture");
+    res.json({
+      followers: user.followers,
+      following: user.following,
+      similarSector,
+    });
+    console.log(user);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -773,6 +784,7 @@ exports.getNotifications = async (req, res) => {
     const user = await User.findById(req.user.id)
       .select("notificationAll")
       .populate("notificationAll", "company_Name username picture");
+
     res.json(user.notificationAll);
   } catch (error) {
     res.status(500).json({ message: error.message });
