@@ -1,12 +1,16 @@
 const helmet = require("helmet");
 const express = require("express");
 const mongoose = require("mongoose");
+const morgan = require("morgan");
 const cors = require("cors");
 const fileUpload = require("express-fileupload");
 const dotenv = require("dotenv");
 const EventEmitter = require("events");
 dotenv.config();
 const { readdirSync } = require("fs");
+const mongoSanitize = require("express-mongo-sanitize");
+const cookieParser = require("cookie-parser");
+const compression = require("compression");
 const app = express();
 
 // let allowed = ["http://localhost:3000", "some other link"];
@@ -27,13 +31,28 @@ const app = express();
 // }
 const eventEmitter = new EventEmitter();
 eventEmitter.setMaxListeners(20);
+//parse json request url
 app.use(express.json());
+//parse json request body
+app.use(express.urlencoded({ extended: true }));
+//mongo request sanitizer
+app.use(mongoSanitize());
+//Enable cookie parser
+app.use(cookieParser());
+//gzip compression
+app.use(compression());
+//gzip compression
+app.use(compression());
+//cors
 app.use(cors());
+
 app.use(
   fileUpload({
     useTempFiles: true,
   })
 );
+
+app.use(helmet());
 app.use((req, res, next) => {
   res.setHeader("Content-Security-Policy", "default-src 'self' trusted.com");
   next();
