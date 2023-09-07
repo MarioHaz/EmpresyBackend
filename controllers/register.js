@@ -677,9 +677,10 @@ exports.searchVisitor = async (req, res) => {
         { company_Name: { $regex: regex } }, // Search by company_Name
         { Economic_Sector: { $regex: regex } }, // Search by company_Name
         { "details.bio": { $regex: regex } }, // Search by company_Name
-        { "details.currentCity": { $regex: regex } }, // Search by company_Name
       ],
-    }).select("company_Name picture username");
+    })
+      .select("company_Name picture username")
+      .populate("details.currentCity");
     res.json(results);
   } catch (error) {
     res.status(500).json({ message: error.message });
