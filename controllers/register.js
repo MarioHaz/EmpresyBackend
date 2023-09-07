@@ -12,6 +12,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const generateCode = require("../helpers/generateCode");
 const mongoose = require("mongoose");
+const unorm = require("unorm");
 
 verificationTemplate = (user) => {
   const emailVerificationToken = generateToken(
@@ -652,7 +653,7 @@ exports.deleteRequest = async (req, res) => {
 exports.search = async (req, res) => {
   try {
     const searchTerm = req.params.searchTerm;
-    const regex = new RegExp(searchTerm, "i"); // Create a case-insensitive regex
+    const regex = new RegExp(diacriticSensitiveRegex(searchTerm), "i"); // Create a case-insensitive regex
     const results = await User.find({
       $or: [
         { company_Name: { $regex: regex } }, // Search by company_Name
@@ -668,10 +669,19 @@ exports.search = async (req, res) => {
   }
 };
 
+function diacriticSensitiveRegex(string = "") {
+  return string
+    .replace(/a/g, "[aáàä]")
+    .replace(/e/g, "[eéë]")
+    .replace(/i/g, "[iíï]")
+    .replace(/o/g, "[oóöò]")
+    .replace(/u/g, "[uüúù]");
+}
+
 exports.searchVisitor = async (req, res) => {
   try {
     const searchTerm = req.params.searchTerm;
-    const regex = new RegExp(searchTerm, "i"); // Create a case-insensitive regex
+    const regex = new RegExp(diacriticSensitiveRegex(searchTerm), "i"); // Create a case-insensitive regex
     const results = await User.find({
       $or: [
         { company_Name: { $regex: regex } }, // Search by company_Name

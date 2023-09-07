@@ -195,4 +195,15 @@ const userSchema = mongoose.Schema(
     timestamps: true,
   }
 );
+userSchema.index(
+  {
+    company_Name: "text",
+    Economic_Sector: "text",
+    "details.bio": "text",
+  },
+  {
+    collation: { locale: "es", strength: 2 },
+    default_language: "none", // Disable language-specific stemming
+  }
+);
 module.exports = mongoose.model("User", userSchema);
