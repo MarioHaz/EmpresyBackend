@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
 
 const { ObjectId } = mongoose.Schema;
 
@@ -22,6 +23,8 @@ const userSchema = mongoose.Schema(
       required: [true, "e-mail is required"],
       trim: true,
       text: true,
+      unique: [true, "email address already exists"],
+      lowercase: true,
     },
     phone_number: {
       type: String,
