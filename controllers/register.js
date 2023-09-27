@@ -1,5 +1,5 @@
 const { sendEmail } = require("../helpers/mailer");
-const { generateToken } = require("../helpers/tokens");
+const { generateToken, verifyToken } = require("../helpers/tokens");
 const {
   validateEmail,
   validateLength,
@@ -127,7 +127,16 @@ exports.register = async (req, res) => {
       "Empresy - Verificación de correo electronico",
       verificationTemplate(user)
     );
-    const token = generateToken({ id: user._id.toString() }, "30d");
+
+    const token = generateToken({ id: user._id.toString() }, "1d");
+    const refresh_token = generateToken({ id: user._id.toString() }, "30d");
+
+    res.cookie("refreshtoken", refresh_token, {
+      httpOnly: true,
+      path: "/refreshtoken",
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    });
+
     res.send({
       id: user._id,
       username: user.username,
@@ -184,7 +193,14 @@ exports.login = async (req, res) => {
         message: "The password you entered is incorrect",
       });
     }
-    const token = generateToken({ id: user._id.toString() }, "30d");
+    const token = generateToken({ id: user._id.toString() }, "1d");
+    const refresh_token = generateToken({ id: user._id.toString() }, "30d");
+
+    res.cookie("refreshtoken", refresh_token, {
+      httpOnly: true,
+      path: "/refreshtoken",
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    });
 
     await user.populate(
       "notificationFollowing.user notificationAll notificationComment.user notificationReact.user",
@@ -795,6 +811,35 @@ exports.getNotifications = async (req, res) => {
       .populate("notificationAll", "company_Name username picture");
 
     res.json(user.notificationAll);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.refreshtoken = async (req, res, next) => {
+  try {
+    const refresh_token = req.cookies.refreshtoken;
+    if (!refresh_token)
+      return res.status(400).json({ message: "Inicia sesion" });
+
+    const check = await verifyToken(
+      refresh_token,
+      process.env.REFRESH_TOKEN_SECRET
+    );
+    console.log(check);
+
+    const user = await findUser(check.userId);
+    const token = generateToken({ id: user._id.toString() }, "1d");
+    res.send({
+      id: user._id,
+      username: user.username,
+      picture: user.picture,
+      company_Name: user.company_Name,
+      token: token,
+      verified: user.verified,
+      Economic_Sector: Economic_Sector,
+      phone_number: phone_number,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

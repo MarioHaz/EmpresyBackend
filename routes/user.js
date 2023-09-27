@@ -21,7 +21,7 @@ const {
   unfriend,
   deleteRequest,
   search,
-
+  refreshtoken,
   addToSearchHistory,
   getSearchHistory,
   removeFromSearch,
@@ -42,6 +42,7 @@ router.post("/findUser", findUser);
 router.post("/sendResetPasswordCode", sendResetPasswordCode);
 router.post("/validateResetCode", validateResetCode);
 router.post("/changePassword", changePassword);
+router.post("/refreshtoken", refreshtoken);
 router.get("/getProfile/:username", authUser, getProfile);
 router.put("/updateProfilePicture", authUser, updateProfilePicture);
 router.put("/updateCover", authUser, updateCover);
