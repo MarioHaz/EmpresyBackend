@@ -5,6 +5,11 @@ exports.generateToken = (payload, expired) => {
 };
 
 exports.verifyToken = (token, secret) => {
-  return jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
-  return check;
+  try {
+    let check = jwt.verify(token, secret);
+
+    return check;
+  } catch (error) {
+    throw new Error("Invalid token");
+  }
 };

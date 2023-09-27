@@ -144,8 +144,12 @@ exports.register = async (req, res) => {
       company_Name: user.company_Name,
       token: token,
       verified: user.verified,
-      Economic_Sector: Economic_Sector,
-      phone_number: phone_number,
+      Economic_Sector: user.Economic_Sector,
+      phone_number: user.phone_number,
+      notificationFollowing: user.notificationFollowing,
+      notificationAll: user.notificationAll,
+      notificationComment: user.notificationComment,
+      notificationReact: user.notificationReact,
       message: "Registro exitoso! por favor verifica tu cuenta para comenzar",
     });
   } catch (error) {
@@ -816,20 +820,19 @@ exports.getNotifications = async (req, res) => {
   }
 };
 
-exports.refreshtoken = async (req, res, next) => {
+exports.refreshtoken = async (req, res) => {
   try {
     const refresh_token = req.cookies.refreshtoken;
+
     if (!refresh_token)
       return res.status(400).json({ message: "Inicia sesion" });
 
-    const check = await verifyToken(
-      refresh_token,
-      process.env.REFRESH_TOKEN_SECRET
-    );
-    console.log(check);
+    const check = verifyToken(refresh_token, process.env.TOKEN_SECRET);
 
-    const user = await findUser(check.userId);
+    const user = await User.findById(check.id);
+
     const token = generateToken({ id: user._id.toString() }, "1d");
+
     res.send({
       id: user._id,
       username: user.username,
@@ -837,8 +840,12 @@ exports.refreshtoken = async (req, res, next) => {
       company_Name: user.company_Name,
       token: token,
       verified: user.verified,
-      Economic_Sector: Economic_Sector,
-      phone_number: phone_number,
+      Economic_Sector: user.Economic_Sector,
+      phone_number: user.phone_number,
+      notificationFollowing: user.notificationFollowing,
+      notificationAll: user.notificationAll,
+      notificationComment: user.notificationComment,
+      notificationReact: user.notificationReact,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
