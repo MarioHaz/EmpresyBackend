@@ -127,7 +127,7 @@ exports.register = async (req, res) => {
       "Empresy - Verificación de correo electronico",
       verificationTemplate(user)
     );
-    const token = generateToken({ id: user._id.toString() }, "7d");
+    const token = generateToken({ id: user._id.toString() }, "30d");
     res.send({
       id: user._id,
       username: user.username,
@@ -137,8 +137,7 @@ exports.register = async (req, res) => {
       verified: user.verified,
       Economic_Sector: Economic_Sector,
       phone_number: phone_number,
-
-      message: "Register Succes! Please activate your email to start",
+      message: "Registro exitoso! por favor verifica tu cuenta para comenzar",
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -185,7 +184,7 @@ exports.login = async (req, res) => {
         message: "The password you entered is incorrect",
       });
     }
-    const token = generateToken({ id: user._id.toString() }, "7d");
+    const token = generateToken({ id: user._id.toString() }, "30d");
 
     await user.populate(
       "notificationFollowing.user notificationAll notificationComment.user notificationReact.user",
@@ -784,7 +783,6 @@ exports.getFollowers = async (req, res) => {
       following: user.following,
       similarSector,
     });
-    console.log(user);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
