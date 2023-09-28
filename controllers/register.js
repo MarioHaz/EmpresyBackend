@@ -672,7 +672,13 @@ exports.deleteRequest = async (req, res) => {
 exports.search = async (req, res) => {
   try {
     const searchTerm = req.params.searchTerm;
-    const regex = new RegExp(diacriticSensitiveRegex(searchTerm), "i"); // Create a case-insensitive regex
+    // Split the searchTerm into words
+
+    // Check if there are at least three words in the input
+    if (searchTerm.length < 3) {
+      return res.json([]); // Return an empty array if less than three words
+    }
+    const regex = new RegExp(`.*${diacriticSensitiveRegex(searchTerm)}.*`, "i"); // Create a case-insensitive regex
     const results = await User.find({
       $or: [
         { company_Name: { $regex: regex } }, // Search by company_Name
@@ -700,7 +706,10 @@ function diacriticSensitiveRegex(string = "") {
 exports.searchVisitor = async (req, res) => {
   try {
     const searchTerm = req.params.searchTerm;
-    const regex = new RegExp(diacriticSensitiveRegex(searchTerm), "i"); // Create a case-insensitive regex
+    if (searchTerm.length < 3) {
+      return res.json([]); // Return an empty array if less than three words
+    }
+    const regex = new RegExp(`.*${diacriticSensitiveRegex(searchTerm)}.*`, "i"); // Create a case-insensitive regex
     const results = await User.find({
       $or: [
         { company_Name: { $regex: regex } }, // Search by company_Name
