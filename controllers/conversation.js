@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const Conversation = require("../models/ConversationModel");
 const {
   doesConversationExisits,
   createConversation,
@@ -44,13 +45,25 @@ exports.create_open_conversation = async (req, res) => {
 exports.getConversation = async (req, res) => {
   try {
     const user_id = req.user.id;
-    const conversations = await getUserConversations(user_id);
+    let conversations;
+    await Conversation.findById(user_id)
+      .populate("users", "-password")
+      .populate("admin", "-password")
+      .populate("latestMessage")
+      .sort({ updatedAt: -1 })
+      .then(async (results) => {
+        results = await User.populate(results, {
+          path: "latestMessage.sender",
+          select: "company_Name email picture",
+        });
+        conversations = results;
+      });
+
     if (!conversations) {
       res.send("No conversations");
     } else {
-      return res.status(200).json;
+      return res.status(200).json(conversations);
     }
-    res.status(200).json(conversations);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

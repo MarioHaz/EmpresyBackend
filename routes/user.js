@@ -29,6 +29,7 @@ const {
   searchVisitor,
   getFollowers,
   getNotifications,
+  getConversation,
 } = require("../controllers/register");
 const { authUser } = require("../middlewares/auth");
 

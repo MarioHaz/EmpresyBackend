@@ -1,4 +1,4 @@
-const ConversationModel = require("../models/ConversationModel.js");
+const Conversation = require("../models/ConversationModel.js");
 const User = require("../models/User");
 
 exports.doesConversationExisits = async (sender_id, receiver_id) => {
@@ -45,7 +45,7 @@ exports.populateConversation = async (id, fieldsToPopulate, fieldsToRemove) => {
 
 exports.getUserConversations = async (user_id) => {
   let conversations;
-  await ConversationModel.find({
+  await Conversation.find({
     users: { $elemtMatch: { $eq: user_id } },
   })
     .populate("users", "-password")

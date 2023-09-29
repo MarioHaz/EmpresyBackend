@@ -7,7 +7,7 @@ const { authUser } = require("../middlewares/auth");
 
 const router = express.Router();
 
-router.post("/messages/conversation", authUser, create_open_conversation);
-router.get("/messages/getConversation", authUser, getConversation);
+router.post("/conversation", authUser, create_open_conversation);
+router.get("/getConversation", authUser, getConversation);
 
 module.exports = router;
