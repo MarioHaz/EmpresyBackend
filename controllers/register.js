@@ -128,10 +128,11 @@ exports.register = async (req, res) => {
       verificationTemplate(user)
     );
 
-    const token = generateToken({ id: user._id.toString() }, "1d");
+    const token = generateToken({ id: user._id.toString() }, "30d");
     const refresh_token = generateToken({ id: user._id.toString() }, "30d");
 
     res.cookie("refreshtoken", refresh_token, {
+      SameSit: strict,
       httpOnly: true,
       path: "/refreshtoken",
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
@@ -197,7 +198,7 @@ exports.login = async (req, res) => {
         message: "The password you entered is incorrect",
       });
     }
-    const token = generateToken({ id: user._id.toString() }, "1d");
+    const token = generateToken({ id: user._id.toString() }, "30d");
     const refresh_token = generateToken({ id: user._id.toString() }, "30d");
 
     res.cookie("refreshtoken", refresh_token, {
@@ -840,7 +841,7 @@ exports.refreshtoken = async (req, res) => {
 
     const user = await User.findById(check.id);
 
-    const token = generateToken({ id: user._id.toString() }, "1d");
+    const token = generateToken({ id: user._id.toString() }, "30d");
 
     res.send({
       id: user._id,

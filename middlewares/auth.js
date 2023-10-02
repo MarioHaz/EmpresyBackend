@@ -5,11 +5,12 @@ exports.authUser = async (req, res, next) => {
     let tmp = req.header("Authorization");
 
     const token = tmp ? tmp.slice(7, tmp.length) : "";
+
     if (!token) {
       res.status(400).json({ message: "Invalid Authentification" });
     }
 
-    jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
+    jwt.verify(token, process.env.TOKEN_SECRET, async (err, user) => {
       if (err) {
         res.status(400).json({ message: "Invalid Authentification" });
       }
