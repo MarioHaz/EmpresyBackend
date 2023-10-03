@@ -132,7 +132,6 @@ exports.register = async (req, res) => {
     const refresh_token = generateToken({ id: user._id.toString() }, "30d");
 
     res.cookie("refreshtoken", refresh_token, {
-      SameSit: strict,
       httpOnly: true,
       path: "/refreshtoken",
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
