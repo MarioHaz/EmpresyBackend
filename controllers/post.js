@@ -128,3 +128,18 @@ exports.visitorPosts = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+exports.getSavedPosts = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    const checkSaved = user?.SavedPosts.map((x) => x.post.toString());
+
+    const savedPosts = await Post.find({ _id: { $in: checkSaved } })
+      .populate("user", "company_Name picture username cover Economic_Sector")
+      .sort({ createdAt: -1 });
+
+    res.json(savedPosts);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
