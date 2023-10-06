@@ -43,7 +43,6 @@ const uploadToCloudinary = async (file, path) => {
       file.tempFilePath,
       {
         folder: path,
-        moderation: "aws_rek",
       },
       (err, res) => {
         if (err) {
