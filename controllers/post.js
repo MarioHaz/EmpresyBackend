@@ -156,22 +156,6 @@ exports.visitorPosts = async (req, res) => {
       {
         $unwind: "$user",
       },
-      {
-        $project: {
-          _id: 1,
-          text: 1,
-          images: 1,
-          createdAt: 1,
-          user: {
-            company_Name: "$user.company_Name",
-            picture: "$user.picture",
-            username: "$user.username",
-            cover: "$user.cover",
-            Economic_Sector: "$user.Economic_Sector",
-          },
-          comments: 1,
-        },
-      },
     ]);
 
     res.json(visitorPosts);
