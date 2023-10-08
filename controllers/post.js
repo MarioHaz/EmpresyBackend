@@ -23,10 +23,32 @@ exports.createPost = async (req, res) => {
 // };
 exports.getAllPosts = async (req, res) => {
   try {
-    const visitorPosts = await Post.find()
-      .populate("user", "company_Name picture username cover Economic_Sector")
-      .populate("comments.commentBy", "company_Name username picture")
-      .sort({ createdAt: -1 });
+    const countPosts = async () => {
+      try {
+        const postCount = await Post.countDocuments();
+        return postCount;
+      } catch (error) {
+        console.error("Error counting posts:", error);
+        throw error;
+      }
+    };
+
+    const totalPostCount = await countPosts();
+
+    const visitorPosts = await Post.aggregate([
+      { $sample: { size: totalPostCount } }, // Set the sample size to the total post count
+      {
+        $lookup: {
+          from: "users", // Assuming the user data is stored in a collection named "users"
+          localField: "user",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      {
+        $unwind: "$user",
+      },
+    ]);
 
     res.json(visitorPosts);
   } catch (error) {
