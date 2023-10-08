@@ -116,12 +116,63 @@ exports.deletePost = async (req, res) => {
   }
 };
 
+// exports.visitorPosts = async (req, res) => {
+//   try {
+//     const visitorPosts = await Post.find()
+//       .populate("user", "company_Name picture username cover Economic_Sector")
+//       .populate("comments.commentBy", "company_Name username picture")
+//       .sort({ createdAt: -1 });
+
+//     res.json(visitorPosts);
+//   } catch (error) {
+//     return res.status(500).json({ message: error.message });
+//   }
+// };
+
 exports.visitorPosts = async (req, res) => {
   try {
-    const visitorPosts = await Post.find()
-      .populate("user", "company_Name picture username cover Economic_Sector")
-      .populate("comments.commentBy", "company_Name username picture")
-      .sort({ createdAt: -1 });
+    const countPosts = async () => {
+      try {
+        const postCount = await Post.countDocuments();
+        return postCount;
+      } catch (error) {
+        console.error("Error counting posts:", error);
+        throw error;
+      }
+    };
+
+    const totalPostCount = await countPosts();
+
+    const visitorPosts = await Post.aggregate([
+      { $sample: { size: totalPostCount } }, // Set the sample size to the total post count
+      {
+        $lookup: {
+          from: "users", // Assuming the user data is stored in a collection named "users"
+          localField: "user",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      {
+        $unwind: "$user",
+      },
+      {
+        $project: {
+          _id: 1,
+          text: 1,
+          images: 1,
+          createdAt: 1,
+          user: {
+            company_Name: "$user.company_Name",
+            picture: "$user.picture",
+            username: "$user.username",
+            cover: "$user.cover",
+            Economic_Sector: "$user.Economic_Sector",
+          },
+          comments: 1,
+        },
+      },
+    ]);
 
     res.json(visitorPosts);
   } catch (error) {
