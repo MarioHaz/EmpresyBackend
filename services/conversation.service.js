@@ -46,7 +46,7 @@ exports.populateConversation = async (id, fieldsToPopulate, fieldsToRemove) => {
 exports.getUserConversations = async (user_id) => {
   let conversations;
   await Conversation.find({
-    users: { $elemtMatch: { $eq: user_id } },
+    users: { $elemMatch: { $eq: user_id } },
   })
     .populate("users", "-password")
     .populate("admin", "-password")
