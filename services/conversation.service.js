@@ -2,11 +2,11 @@ const Conversation = require("../models/ConversationModel.js");
 const User = require("../models/User");
 
 exports.doesConversationExisits = async (sender_id, receiver_id) => {
-  let convos = await ConversationModel.find({
+  let convos = await Conversation.find({
     isGroup: false,
     $and: [
-      { users: { $elemtMatch: { $eq: sender_id } } },
-      { users: { $elemtMatch: { $eq: receiver_id } } },
+      { users: { $elemMatch: { $eq: sender_id } } },
+      { users: { $elemMatch: { $eq: receiver_id } } },
     ],
   })
     .populate("users", "-password")
@@ -25,7 +25,7 @@ exports.doesConversationExisits = async (sender_id, receiver_id) => {
 };
 
 exports.createConversation = async (data) => {
-  const newConvo = await ConversationModel.create(data);
+  const newConvo = await Conversation.create(data);
   if (!newConvo) {
   } else {
     return newConvo;
@@ -33,7 +33,7 @@ exports.createConversation = async (data) => {
 };
 
 exports.populateConversation = async (id, fieldsToPopulate, fieldsToRemove) => {
-  const populatedConvo = await ConversationModel.findOne({
+  const populatedConvo = await Conversation.findOne({
     _id: id,
   }).populate(fieldsToPopulate, fieldsToRemove);
   if (!populatedConvo) {
@@ -66,7 +66,7 @@ exports.getUserConversations = async (user_id) => {
 };
 
 exports.updateLatestMessage = async (convo_id, msg) => {
-  const updatedConvo = await ConversationModel.findByIdAndUpdate(convo_id, {
+  const updatedConvo = await Conversation.findByIdAndUpdate(convo_id, {
     lastesMessage: msg,
   });
   if (!updatedConvo) {

@@ -1,8 +1,8 @@
-const messageModel = require("../models/messageModel.js");
+const Messages = require("../models/messageModel.js");
 const User = require("../models/User.js");
 
 exports.createMessage = async (data) => {
-  let newMessage = await messageModel.create(data);
+  let newMessage = await Messages.create(data);
   if (!newMessage) {
     res.status(400);
   } else {
@@ -11,17 +11,16 @@ exports.createMessage = async (data) => {
 };
 
 exports.populateMessage = async (id) => {
-  let msg = await messageModel
-    .findById(id)
+  let msg = await Messages.findById(id)
     .populate({
       path: "sender",
       select: "company_Name picture",
       model: "User",
     })
-    .popultae({
+    .populate({
       path: "conversation",
       select: "company_Name isGropu users",
-      model: "ConversationModel",
+      model: "Conversation",
       populate: {
         path: "users",
         select: "company_Name email picture",
@@ -36,8 +35,7 @@ exports.populateMessage = async (id) => {
 };
 
 exports.getConvoMessages = async (convo_id) => {
-  const messages = await messageModel
-    .find({ conversation: convo_id })
+  const messages = await Messages.find({ conversation: convo_id })
     .populate("sender", "name picture emial")
     .populate("conversation");
   if (!messages) {

@@ -25,7 +25,8 @@ exports.create_open_conversation = async (req, res) => {
     } else {
       let receiver_user = await User.findById(receiver_id);
       let convoData = {
-        name: receiver_user.name,
+        name: receiver_user.company_Name,
+        picture: receiver_user.picture,
         isGroup: false,
         users: [sender_id, receiver_id],
       };
@@ -35,7 +36,7 @@ exports.create_open_conversation = async (req, res) => {
         "users",
         "-password"
       );
-      res.status(200).json(newConpopulatedConvovo);
+      res.status(200).json(populatedConvo);
     }
   } catch (error) {
     return res.status(500).json({ message: error.message });

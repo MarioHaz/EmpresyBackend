@@ -1,8 +1,8 @@
 const User = require("../models/User");
 const { updateLatestMessage } = require("../services/conversation.service");
+const { populateMessage } = require("../services/message.service");
 const {
   createMessage,
-  populateMessage,
   getConvoMessages,
 } = require("../services/message.service");
 
@@ -21,9 +21,9 @@ exports.sendMessage = async (req, res) => {
       files: files || [],
     };
     let newMessage = await createMessage(msgData);
-    let populateMessage = await populateMessage(newMessage._id);
+    let populateMessages = await populateMessage(newMessage._id);
     await updateLatestMessage(convo_id, newMessage);
-    res.json(populateMessage);
+    res.json(populateMessages);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
