@@ -68,11 +68,10 @@ exports.getUserConversations = async (user_id) => {
 };
 
 exports.updateLatestMessage = async (convo_id, msg) => {
-  console.log(msg);
   const updatedConvo = await ConversationModel.findByIdAndUpdate(convo_id, {
     latestMessage: msg,
   });
-  console.log(updatedConvo);
+
   if (!updatedConvo) {
     res.status(400);
   } else {
