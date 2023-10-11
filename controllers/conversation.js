@@ -5,6 +5,7 @@ const {
   createConversation,
   populateConversation,
   getUserConversations,
+  searchUsers,
 } = require("../services/conversation.service");
 
 exports.create_open_conversation = async (req, res) => {
@@ -48,6 +49,19 @@ exports.getConversation = async (req, res) => {
     const user_id = req.user.id;
     const conversations = await getUserConversations(user_id);
     res.status(200).json(conversations);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+exports.searchUserMessenger = async (req, res) => {
+  try {
+    const keyword = req.query.search;
+    if (!keyword) {
+      return res.status(500).json({ message: error.message });
+    }
+    const users = await searchUsers(keyword);
+    res.status(200).json(users);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

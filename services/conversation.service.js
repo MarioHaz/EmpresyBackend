@@ -77,3 +77,13 @@ exports.updateLatestMessage = async (convo_id, msg) => {
     return updatedConvo;
   }
 };
+
+exports.searchUsers = async (keyword) => {
+  const users = await User.find({
+    $or: [
+      { company_Name: { $regex: keyword, $options: "i" } },
+      { "details.bio": { $regex: keyword, $options: "i" } },
+    ],
+  });
+  return users;
+};
