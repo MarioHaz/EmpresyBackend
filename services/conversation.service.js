@@ -1,31 +1,33 @@
-const Conversation = require("../models/ConversationModel.js");
+const ConversationModel = require("../models/ConversationModel.js");
 const User = require("../models/User");
 
 exports.doesConversationExisits = async (sender_id, receiver_id) => {
-  let convos = await Conversation.find({
+  let convos = await ConversationModel.find({
     isGroup: false,
     $and: [
       { users: { $elemMatch: { $eq: sender_id } } },
-      { users: { $elemMatch: { $eq: receiver_id } } },
+      { users: { $elemMatch: { $eq: sender_id } } },
     ],
   })
     .populate("users", "-password")
     .populate("latestMessage");
+
   if (!convos) {
     res.status(400);
   }
-
+  console.log("Latest Message:", convos[0].latestMessage);
   // populate message model
   convos = await User.populate(convos, {
     path: "latestMessage.sender",
     select: "company_Name email picture",
   });
 
+  console.log(convos[0]);
   return convos[0];
 };
 
 exports.createConversation = async (data) => {
-  const newConvo = await Conversation.create(data);
+  const newConvo = await ConversationModel.create(data);
   if (!newConvo) {
   } else {
     return newConvo;
@@ -33,7 +35,7 @@ exports.createConversation = async (data) => {
 };
 
 exports.populateConversation = async (id, fieldsToPopulate, fieldsToRemove) => {
-  const populatedConvo = await Conversation.findOne({
+  const populatedConvo = await ConversationModel.findOne({
     _id: id,
   }).populate(fieldsToPopulate, fieldsToRemove);
   if (!populatedConvo) {
@@ -45,7 +47,7 @@ exports.populateConversation = async (id, fieldsToPopulate, fieldsToRemove) => {
 
 exports.getUserConversations = async (user_id) => {
   let conversations;
-  await Conversation.find({
+  await ConversationModel.find({
     users: { $elemMatch: { $eq: user_id } },
   })
     .populate("users", "-password")
@@ -66,9 +68,11 @@ exports.getUserConversations = async (user_id) => {
 };
 
 exports.updateLatestMessage = async (convo_id, msg) => {
-  const updatedConvo = await Conversation.findByIdAndUpdate(convo_id, {
-    lastesMessage: msg,
+  console.log(msg);
+  const updatedConvo = await ConversationModel.findByIdAndUpdate(convo_id, {
+    latestMessage: msg,
   });
+  console.log(updatedConvo);
   if (!updatedConvo) {
     res.status(400);
   } else {

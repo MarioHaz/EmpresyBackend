@@ -5,7 +5,7 @@ const conversationSchema = mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, "Cconversation is required"],
+      required: [true, "Conversation is required"],
       trim: true,
     },
 
@@ -14,13 +14,14 @@ const conversationSchema = mongoose.Schema(
       required: true,
     },
 
-    idGroup: {
+    isGroup: {
       type: Boolean,
       required: true,
       default: false,
     },
 
     users: [{ type: ObjectId, ref: "User" }],
+
     latestMessage: {
       type: ObjectId,
       ref: "Messages",
