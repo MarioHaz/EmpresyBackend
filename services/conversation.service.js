@@ -6,7 +6,7 @@ exports.doesConversationExisits = async (sender_id, receiver_id) => {
     isGroup: false,
     $and: [
       { users: { $elemMatch: { $eq: sender_id } } },
-      { users: { $elemMatch: { $eq: sender_id } } },
+      { users: { $elemMatch: { $eq: receiver_id } } },
     ],
   })
     .populate("users", "-password")
@@ -15,14 +15,13 @@ exports.doesConversationExisits = async (sender_id, receiver_id) => {
   if (!convos) {
     res.status(400);
   }
-  console.log("Latest Message:", convos[0].latestMessage);
+
   // populate message model
   convos = await User.populate(convos, {
     path: "latestMessage.sender",
     select: "company_Name email picture",
   });
 
-  console.log(convos[0]);
   return convos[0];
 };
 
