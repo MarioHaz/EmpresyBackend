@@ -60,7 +60,8 @@ exports.searchUserMessenger = async (req, res) => {
     if (!keyword) {
       return res.status(500).json({ message: error.message });
     }
-    const users = await searchUsers(keyword);
+    const users = await searchUsers(keyword, req.user.id);
+
     res.status(200).json(users);
   } catch (error) {
     return res.status(500).json({ message: error.message });

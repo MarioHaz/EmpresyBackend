@@ -30,7 +30,6 @@ const {
   getFollowers,
   getNotifications,
   getConversation,
-  getSavedPosts,
 } = require("../controllers/register");
 const { authUser } = require("../middlewares/auth");
 
