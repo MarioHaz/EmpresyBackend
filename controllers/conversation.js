@@ -12,6 +12,7 @@ exports.create_open_conversation = async (req, res) => {
   try {
     const sender_id = req.user.id;
     const { receiver_id } = req.body;
+
     //check if receiver_id is provide
     if (!receiver_id) {
       return res.status(400).json({ message: "Invalid receiver" });
