@@ -25,10 +25,10 @@ exports.create_open_conversation = async (req, res) => {
     if (existed_conversation) {
       res.json(existed_conversation);
     } else {
-      let receiver_user = await User.findById(receiver_id);
+      //let receiver_user = await User.findById(receiver_id);
       let convoData = {
-        name: receiver_user.company_Name,
-        picture: receiver_user.picture,
+        name: "receiver_user.company_Name",
+        picture: " receiver_user.picture",
         isGroup: false,
         users: [sender_id, receiver_id],
       };

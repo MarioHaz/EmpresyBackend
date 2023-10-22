@@ -6,11 +6,13 @@ const cors = require("cors");
 const fileUpload = require("express-fileupload");
 const dotenv = require("dotenv");
 const EventEmitter = require("events");
+const { Actions } = require("./SocketServer");
 dotenv.config();
 const { readdirSync } = require("fs");
 const mongoSanitize = require("express-mongo-sanitize");
 const cookieParser = require("cookie-parser");
 const compression = require("compression");
+const { Server } = require("socket.io");
 const app = express();
 
 // let allowed = ["http://localhost:3000", "some other link"];
@@ -69,6 +71,21 @@ mongoose
   .catch((err) => console.log("error connecting", err));
 
 const PORT = process.env.PORT;
-app.listen(PORT, () => {
+let server;
+
+server = app.listen(PORT, () => {
   console.log("Listening on port 8000");
+});
+
+// socket io
+const io = new Server(server, {
+  pingTimeout: 6000,
+  cors: {
+    origin: process.env.BASE_URL,
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log("socket conected");
+  Actions(socket);
 });
