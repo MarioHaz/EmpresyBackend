@@ -19,7 +19,7 @@ exports.populateMessage = async (id) => {
     })
     .populate({
       path: "conversation",
-      select: "company_Name isGropu users",
+      select: "name picture isGropu users",
       model: "Conversation",
       populate: {
         path: "users",
@@ -36,7 +36,7 @@ exports.populateMessage = async (id) => {
 
 exports.getConvoMessages = async (convo_id) => {
   const messages = await Messages.find({ conversation: convo_id })
-    .populate("sender", "name picture emial")
+    .populate("sender", "company_Name picture email")
     .populate("conversation");
   if (!messages) {
     res.status(400);

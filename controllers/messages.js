@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const messageModel = require("../models/messageModel");
 const { updateLatestMessage } = require("../services/conversation.service");
 const { populateMessage } = require("../services/message.service");
 const {
@@ -9,7 +10,9 @@ const {
 exports.sendMessage = async (req, res) => {
   try {
     const user_id = req.user.id;
+
     const { message, convo_id, files } = req.body;
+
     if (!convo_id || (!message && !files)) {
       console.log("error provide conversation id and message body");
       return res.sendStatus(400);
@@ -37,6 +40,7 @@ exports.getMessages = async (req, res) => {
     }
 
     const messages = await getConvoMessages(convo_id);
+
     res.json(messages);
   } catch (error) {
     return res.status(500).json({ message: error.message });
