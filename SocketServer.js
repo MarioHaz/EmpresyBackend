@@ -1,7 +1,22 @@
-exports.Actions = (socket) => {
+let onlineUsers = [];
+
+exports.Actions = (socket, io) => {
   // user join or open messages
   socket.on("join", (user) => {
     socket.join(user);
+    // add joined user to online users
+    if (!onlineUsers.some((u) => u.userId === user)) {
+      onlineUsers.push({ userId: user, socketId: socket.id });
+    }
+    // send online users
+    io.emit("get-online-users", onlineUsers);
+  });
+
+  //socket disconnected
+  socket.on("disconnect", () => {
+    onlineUsers = onlineUsers.filter((user) => user.socketId !== socket.id);
+
+    io.emit("get-online-users", onlineUsers);
   });
 
   // join a conversation room
@@ -11,12 +26,20 @@ exports.Actions = (socket) => {
 
   //send and recibe message
   socket.on("send message", (message) => {
-    console.log("new message", message);
     let conversation = message.conversation;
+    socket.emit("send message", message);
     if (!conversation.users) return;
     conversation.users.forEach((user) => {
-      if (user.id === message.sender._id) return;
-      socket.in(user.id).emit("message recived", message);
+      if (user._id === message.sender._id) return;
+      socket.in(user._id).emit("receive message", message);
     });
+  });
+
+  //typing
+  socket.on("typing", (conversation) => {
+    socket.in(conversation).emit("typing", conversation);
+  });
+  socket.on("stop typing", (conversation) => {
+    socket.in(conversation).emit("stop typing");
   });
 };
