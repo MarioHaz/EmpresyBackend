@@ -52,12 +52,12 @@ verificationTemplate = (user) => {
 
 resetPasswordTemplate = (userName, code) => {
   return `
-   
-    <div style="padding: 1rem 0; border-top: 1px solid #e5e5e5; border-bottom: 1px solid #e5e5e5; color: #141823; font-size: 17px; font-family: sans-serif">
-    <div style="display: flex; margin-bottom: 1rem; max-width: 7; align-items: center; gap: 10px; font-family: sans-serif; font-weight: 600; color: #398ad5">
-      <img width="170px" src="https://res.cloudinary.com/danfiejkv/image/upload/v1681770032/Logo-empresy-web_djmfw2.png" alt="">
+    <div style="style="padding: 1rem 0; margin-bottom: 1rem; align-items: center; font-family: sans-serif; color: #398ad5">
+      
       <span>Código de restablecimiento de contraseña</span>
     </div>
+    <div style="padding: 1rem 0; border-top: 1px solid #e5e5e5; border-bottom: 1px solid #e5e5e5; color: #141823; font-size: 17px; font-family: sans-serif">
+    
       <span>Hola ${userName}</span>
       <div style="padding: 20px 0">
         <span style="padding: 1.5rem 0">Aquí tienes tu código de verificación. Sigue las instrucciones para restablecer tu contraseña.</span>
