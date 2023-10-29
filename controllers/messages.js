@@ -1,5 +1,5 @@
 const User = require("../models/User");
-const messageModel = require("../models/messageModel");
+const Messages = require("../models/messageModel.js");
 const { updateLatestMessage } = require("../services/conversation.service");
 const { populateMessage } = require("../services/message.service");
 const {
@@ -42,6 +42,32 @@ exports.getMessages = async (req, res) => {
     const messages = await getConvoMessages(convo_id);
 
     res.json(messages);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+exports.deleteMessage = async (req, res) => {
+  try {
+    const { messageId } = req.params;
+    const data = await Messages.findById(messageId);
+    const convo_id = data.conversation;
+    const premessages = await getConvoMessages(convo_id);
+    await Messages.findByIdAndRemove(messageId);
+    const posmessages = await getConvoMessages(convo_id);
+
+    // Check if the deleted message was the last message
+    const isLastMessage =
+      premessages[premessages.length - 1]._id.toString() === messageId;
+
+    // Update latestMessage if the deleted message was the last one
+    if (isLastMessage && posmessages.length > 0) {
+      const newLatestMessage = posmessages[posmessages.length - 1]._id;
+      // Update the conversation's latestMessage using the updateLatestMessage function
+      await updateLatestMessage(convo_id, newLatestMessage);
+    }
+
+    res.json({ status: "ok", data });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

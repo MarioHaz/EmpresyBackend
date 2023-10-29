@@ -42,4 +42,11 @@ exports.Actions = (socket, io) => {
   socket.on("stop typing", (conversation) => {
     socket.in(conversation).emit("stop typing");
   });
+
+  //delete message
+
+  socket.on("delete", (message) => {
+    console.log(" ------>", message._id);
+    socket.in(message.conversation._id).emit("delete", message._id);
+  });
 };
