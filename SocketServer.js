@@ -49,4 +49,8 @@ exports.Actions = (socket, io) => {
     console.log(" ------>", message._id);
     socket.in(message.conversation._id).emit("delete", message._id);
   });
+  // listen open_conversation_outside
+  socket.on("conversation_from_profile", (receiver) => {
+    socket.emit("conversation_from_profile", receiver);
+  });
 };
