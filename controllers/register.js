@@ -44,7 +44,7 @@ verificationTemplate = (user) => {
 
     <div style="padding-top:20px">
       <span style="margin:1.5rem 0; color:#898f9c">
-        Empresy te permite mantener contacto con otras empresas. Una vez registrado en Empresy, podrás compartir tus productos, contactos de proveedores y mucho más.
+        Empresy te permite mantener contacto con otras empresas. Una vez registrado en Empresy, podrás compartir tus productos, contactar proveedores y mucho más.
       </span>
     </div>
   </div>`;
