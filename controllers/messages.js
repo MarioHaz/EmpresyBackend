@@ -50,28 +50,49 @@ exports.sendMessage = async (req, res) => {
       return res.sendStatus(400);
     }
 
+    const messages = await getConvoMessages(convo_id);
+
+    let sentMessageTrue = messages.map((message) => {
+      return message.sender._id.toString() === user_id;
+    });
+
+    const isAnyTrue = sentMessageTrue.includes(true);
+
+    if (isAnyTrue) {
+      // At least one message is false, so set sentMessage to false
+      sentMessageTrue = true;
+    } else {
+      // There are no false values, so set sentMessage to true
+      sentMessageTrue = false;
+    }
+
+    console.log(sentMessageTrue);
+    console.log(user_id);
+
     const populatedConvo = await populateConversation(
       convo_id,
       "users",
       "-password"
     );
 
-    const receiver = populatedConvo.users
-      .map((profile) => {
-        if (profile._id.toString() !== user_id) {
-          return profile;
-        }
-        return null; // Return null for the user that matches user_id
-      })
-      .filter((profile) => profile !== null)[0];
+    if (sentMessageTrue === false || sentMessageTrue.length === 0) {
+      const receiver = populatedConvo.users
+        .map((profile) => {
+          if (profile._id.toString() !== user_id) {
+            return profile;
+          }
+          return null; // Return null for the user that matches user_id
+        })
+        .filter((profile) => profile !== null)[0];
 
-    // Now, 'receiver' will contain the user profile that doesn't match the 'user_id'
+      // Now, 'receiver' will contain the user profile that doesn't match the 'user_id'
 
-    sendEmail(
-      receiver.email,
-      "Tienes un mensaje en empresy - Quieren contactar contigo!",
-      newMessageTemplate()
-    );
+      sendEmail(
+        receiver.email,
+        "Tienes un mensaje en empresy - Quieren contactar contigo!",
+        newMessageTemplate()
+      );
+    }
 
     const msgData = {
       sender: user_id,
