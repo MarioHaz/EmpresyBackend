@@ -1,11 +1,43 @@
+const { sendEmail } = require("../helpers/mailer");
 const User = require("../models/User");
 const Messages = require("../models/messageModel.js");
-const { updateLatestMessage } = require("../services/conversation.service");
+const {
+  updateLatestMessage,
+  populateConversation,
+} = require("../services/conversation.service");
 const { populateMessage } = require("../services/message.service");
 const {
   createMessage,
   getConvoMessages,
 } = require("../services/message.service");
+
+newMessageTemplate = () => {
+  return `
+  <div style="display:flex; margin-bottom:1rem; max-width:100%; align-items:center; gap:10px; font-family:sans-serif; font-weight:600; color:#398ad5">
+    <span>
+      <strong>Tienes un mensaje: revisa tus mensajes en empresy</strong>
+    </span>
+  </div>
+
+  <div style="padding:1rem 0; border-top:1px solid #e5e5e5; border-bottom:1px solid #e5e5e5; color:#141823; font-size:17px; font-family:sans-serif">
+
+    <div style="padding:20px 0">
+      <span style="padding:1.5rem 0">
+        Quieren contactar contigo, revisa quien te envio un mensaje en tu cuenta de empresy.
+      </span>
+    </div>
+
+    <a href="https://empresy.com" style="width:200px; padding:10px 15px; background:#398ad5; color:#fff; text-decoration:none; font-weight:600; border-radius:10px">
+      Ir a empresy
+    </a><br>
+
+    <div style="padding-top:20px">
+      <span style="margin:1.5rem 0; color:#898f9c">
+        Empresy te permite mantener contacto con otras empresas. Una vez registrado en Empresy, podrás compartir tus productos, contactar proveedores y mucho más.
+      </span>
+    </div>
+  </div>`;
+};
 
 exports.sendMessage = async (req, res) => {
   try {
@@ -17,6 +49,30 @@ exports.sendMessage = async (req, res) => {
       console.log("error provide conversation id and message body");
       return res.sendStatus(400);
     }
+
+    const populatedConvo = await populateConversation(
+      convo_id,
+      "users",
+      "-password"
+    );
+
+    const receiver = populatedConvo.users
+      .map((profile) => {
+        if (profile._id.toString() !== user_id) {
+          return profile;
+        }
+        return null; // Return null for the user that matches user_id
+      })
+      .filter((profile) => profile !== null)[0];
+
+    // Now, 'receiver' will contain the user profile that doesn't match the 'user_id'
+
+    sendEmail(
+      receiver.email,
+      "Tienes un mensaje en empresy - Quieren contactar contigo!",
+      newMessageTemplate()
+    );
+
     const msgData = {
       sender: user_id,
       message,

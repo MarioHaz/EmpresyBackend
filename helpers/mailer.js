@@ -68,17 +68,17 @@ const { EMAIL } = process.env;
 //   });
 // };
 
-const sgMail = require('@sendgrid/mail')
-sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+const sgMail = require("@sendgrid/mail");
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 exports.sendEmail = (toEmail, subject, html) => {
   const msg = {
     to: toEmail,
     from: EMAIL,
     subject: subject,
-    text: 'hola mundo',
+    text: "hola mundo",
     html: html,
-  }
+  };
 
   sgMail
     .send(msg)
@@ -87,7 +87,7 @@ exports.sendEmail = (toEmail, subject, html) => {
       console.log(response[0].headers);
       return response;
     })
-  .catch((error) => {
-    console.error(error.response.body.errors);
-  })
-}
+    .catch((error) => {
+      console.error(error.response.body.errors);
+    });
+};

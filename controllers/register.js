@@ -52,7 +52,7 @@ verificationTemplate = (user) => {
 
 resetPasswordTemplate = (userName, code) => {
   return `
-    <div style="style="padding: 1rem 0; margin-bottom: 1rem; align-items: center; font-family: sans-serif; color: #398ad5">
+    <div style="display:flex; margin-bottom:1rem; max-width:100%; align-items:center; gap:10px; font-family:sans-serif; font-weight:600; color:#398ad5">
       
       <span>Código de restablecimiento de contraseña</span>
     </div>
