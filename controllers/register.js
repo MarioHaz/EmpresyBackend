@@ -1,5 +1,10 @@
 const { sendEmail } = require("../helpers/mailer");
-const { generateToken, verifyToken } = require("../helpers/tokens");
+const {
+  generateToken,
+  verifyToken,
+  generateRefreshToken,
+  verifyRefreshToken,
+} = require("../helpers/tokens");
 const {
   validateEmail,
   validateLength,
@@ -72,6 +77,7 @@ resetPasswordTemplate = (userName, code) => {
 
 exports.register = async (req, res) => {
   try {
+    console.log("register");
     const {
       company_Name,
       email,
@@ -199,7 +205,10 @@ exports.login = async (req, res) => {
       });
     }
     const token = generateToken({ id: user._id.toString() }, "30d");
-    const refresh_token = generateToken({ id: user._id.toString() }, "30d");
+    const refresh_token = generateRefreshToken(
+      { id: user._id.toString() },
+      "30d"
+    );
 
     res.cookie("refreshtoken", refresh_token, {
       httpOnly: true,
@@ -218,6 +227,7 @@ exports.login = async (req, res) => {
       picture: user.picture,
       company_Name: user.company_Name,
       token: token,
+      refresh_token: refresh_token,
       verified: user.verified,
       Economic_Sector: user.Economic_Sector,
       phone_number: user.phone_number,
@@ -833,12 +843,16 @@ exports.getNotifications = async (req, res) => {
 
 exports.refreshtoken = async (req, res) => {
   try {
-    const refresh_token = req.cookies.refreshtoken;
+    const refresh_token = req.body;
+    const tokenString = refresh_token.refresh_token;
 
     if (!refresh_token)
       return res.status(400).json({ message: "Inicia sesion" });
 
-    const check = verifyToken(refresh_token, process.env.TOKEN_SECRET);
+    const check = jwt.verify(tokenString, process.env.REFRESH_TOKEN_SECRET);
+    if (!check) {
+      throw new Error("Invalid token");
+    }
 
     const user = await User.findById(check.id);
 
