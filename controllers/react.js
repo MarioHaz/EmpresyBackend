@@ -5,11 +5,15 @@ const mongoose = require("mongoose");
 
 exports.reactPost = async (req, res) => {
   try {
+    const reactBy = req.user.id;
+
     const { postId, react } = req.body;
+
     const check = await React.findOne({
       postRef: postId,
       reactBy: req.user.id,
     });
+
     const post = await Post.findById(postId);
 
     if (check == null) {
@@ -18,6 +22,7 @@ exports.reactPost = async (req, res) => {
         postRef: postId,
         reactBy: req.user.id,
       });
+
       await newReact.save();
 
       await User.findByIdAndUpdate(post.user, {
@@ -26,6 +31,7 @@ exports.reactPost = async (req, res) => {
             type: "react", // Add the type to differentiate between notifications
             user: req.user.id,
             createdAt: new Date(),
+            postRef: postId,
           },
         },
       });
@@ -34,9 +40,11 @@ exports.reactPost = async (req, res) => {
           notificationAll: req.user.id,
         },
       });
+      res.json("added");
     } else {
       if (check.react == react) {
         await React.findByIdAndRemove(check._id);
+        res.json("removed");
       } else {
         await React.findByIdAndUpdate(check._id, {
           react: react,

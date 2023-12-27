@@ -396,6 +396,7 @@ exports.getProfile = async (req, res) => {
 exports.updateProfilePicture = async (req, res) => {
   try {
     const { url } = req.body;
+
     await User.findByIdAndUpdate(req.user.id, {
       picture: url,
     });
@@ -684,6 +685,7 @@ exports.deleteRequest = async (req, res) => {
 exports.search = async (req, res) => {
   try {
     const searchTerm = req.params.searchTerm;
+
     // Split the searchTerm into words
 
     // Check if there are at least three words in the input
@@ -698,7 +700,7 @@ exports.search = async (req, res) => {
         { "details.bio": { $regex: regex } }, // Search by company_Name
       ],
     })
-      .select("company_Name picture username")
+      .select("company_Name picture username Economic_Sector ")
       .populate("details.currentCity");
     res.json(results);
   } catch (error) {
@@ -871,6 +873,58 @@ exports.refreshtoken = async (req, res) => {
       notificationAll: user.notificationAll,
       notificationComment: user.notificationComment,
       notificationReact: user.notificationReact,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.logeduser = async (req, res) => {
+  try {
+    const refresh_token = req.query.refreshToken;
+
+    if (!refresh_token) {
+      return res.status(400).json({ message: "Please log in" });
+    }
+
+    let decodedToken;
+    try {
+      decodedToken = jwt.verify(
+        refresh_token,
+        process.env.REFRESH_TOKEN_SECRET
+      );
+    } catch (error) {
+      throw new Error("Invalid token");
+    }
+
+    const user = await User.findById(decodedToken.id)
+      .populate("followers", "company_Name username picture")
+      .populate("following", "company_Name username picture");
+
+    await user.populate(
+      "notificationFollowing.user notificationAll notificationComment.user notificationReact.user",
+      "company_Name username picture"
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      id: user._id,
+      username: user.username,
+      picture: user.picture,
+      company_Name: user.company_Name,
+      verified: user.verified,
+      Economic_Sector: user.Economic_Sector,
+      phone_number: user.phone_number,
+      notificationFollowing: user.notificationFollowing,
+      notificationAll: user.notificationAll,
+      notificationComment: user.notificationComment,
+      notificationReact: user.notificationReact,
+      details: user.details,
+      following: user.following,
+      followers: user.followers,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

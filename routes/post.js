@@ -9,6 +9,9 @@ const {
   getSavedPosts,
   getOrderedPosts,
   getOrderedVisitorPosts,
+  getUserPosts,
+  getSavedPostsMovil,
+  getPost,
 } = require("../controllers/post");
 const { authUser } = require("../middlewares/auth");
 
@@ -24,5 +27,8 @@ router.put("/savePost/:id", authUser, savePost);
 router.delete("/deletePost/:id", authUser, deletePost);
 router.get("/visitorPosts", visitorPosts);
 router.get("/getSavedPosts", authUser, getSavedPosts);
+router.get("/getSavedPostsMovil", authUser, getSavedPostsMovil);
+router.get("/getUserPosts", authUser, getUserPosts);
+router.put("/getPost/:id", authUser, getPost);
 
 module.exports = router;

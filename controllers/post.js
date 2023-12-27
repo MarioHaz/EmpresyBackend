@@ -1,4 +1,5 @@
 const Post = require("../models/Post");
+const React = require("../models/React");
 const User = require("../models/User");
 
 exports.createPost = async (req, res) => {
@@ -116,6 +117,7 @@ exports.savePost = async (req, res) => {
     const check = user?.SavedPosts.find(
       (post) => post.post.toString() == postId
     );
+
     if (check) {
       await User.findByIdAndUpdate(req.user.id, {
         $pull: {
@@ -124,6 +126,7 @@ exports.savePost = async (req, res) => {
           },
         },
       });
+      res.json("unsaved");
     } else {
       await User.findByIdAndUpdate(req.user.id, {
         $push: {
@@ -133,6 +136,7 @@ exports.savePost = async (req, res) => {
           },
         },
       });
+      res.json("saved");
     }
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -250,6 +254,54 @@ exports.getSavedPosts = async (req, res) => {
       .sort({ createdAt: -1 });
 
     res.json(savedPosts);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getSavedPostsMovil = async (req, res) => {
+  try {
+    const user = await User.findById(req.query.idUser);
+    const checkSaved = user?.SavedPosts.map((x) => x.post.toString());
+
+    const savedPosts = await Post.find({ _id: { $in: checkSaved } })
+      .populate("user", "company_Name picture username cover Economic_Sector")
+      .sort({ createdAt: -1 });
+
+    res.json(savedPosts);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getUserPosts = async (req, res) => {
+  try {
+    const id = req.query.idUser;
+
+    // Assuming Post model has a field 'user' which stores the user's ID
+    const userPosts = await Post.find({ user: id })
+      .populate("user", "company_Name picture username cover Economic_Sector")
+      .sort({ createdAt: -1 });
+
+    res.json(userPosts);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getPost = async (req, res) => {
+  try {
+    const reactsArray = await React.find({ postRef: req.params.id });
+
+    console.log(reactsArray);
+
+    // const posts = await Post.findById(req.params.id)
+    //   .populate(
+    //     "user text image background",
+    //     "company_Name picture username Economic_Sector"
+    //   )
+    //   .sort({ createdAt: -1 }); // to the newest to the oldest the way post come
+    // console.log(posts);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -84,6 +84,10 @@ const userSchema = mongoose.Schema(
           type: Date,
           required: true,
         },
+        postRef: {
+          type: ObjectId,
+          ref: "Post",
+        },
       },
     ],
     notificationFollowing: [
@@ -177,6 +181,10 @@ const userSchema = mongoose.Schema(
       },
 
       currentCity: {
+        type: String,
+        text: true,
+      },
+      employeesNumber: {
         type: String,
         text: true,
       },
