@@ -291,17 +291,14 @@ exports.getUserPosts = async (req, res) => {
 
 exports.getPost = async (req, res) => {
   try {
-    const reactsArray = await React.find({ postRef: req.params.id });
+    const postId = req.params.id;
 
-    console.log(reactsArray);
+    const posts = await Post.findById(postId).populate(
+      "user",
+      "company_Name picture username cover"
+    );
 
-    // const posts = await Post.findById(req.params.id)
-    //   .populate(
-    //     "user text image background",
-    //     "company_Name picture username Economic_Sector"
-    //   )
-    //   .sort({ createdAt: -1 }); // to the newest to the oldest the way post come
-    // console.log(posts);
+    res.json(posts);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

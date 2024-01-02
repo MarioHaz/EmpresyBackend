@@ -24,6 +24,11 @@ exports.Actions = (socket, io) => {
     socket.join(conversation);
   });
 
+  // join a conversation room
+  socket.on("leave conversation", (conversation) => {
+    socket.leave(conversation);
+  });
+
   //send and recibe message
   socket.on("send message", (message) => {
     let conversation = message.conversation;

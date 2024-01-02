@@ -68,3 +68,21 @@ exports.searchUserMessenger = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+exports.removeConversation = async (req, res) => {
+  try {
+    const conversationId = req.params.id; // Assuming the conversation ID is passed in the request params
+    console.log(conversationId);
+
+    const conversation = await Conversation.findByIdAndRemove(conversationId);
+    console.log(conversation);
+
+    if (!conversation) {
+      return res.status(404).json({ message: "Conversation not found" });
+    }
+
+    res.status(200).json({ message: "Conversation removed successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};

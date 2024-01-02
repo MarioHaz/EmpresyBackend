@@ -816,15 +816,20 @@ exports.getFollowers = async (req, res) => {
   try {
     const user = await User.findById(req.user.id)
       .select("followers following Economic_Sector")
-      .populate("followers", "company_Name username picture")
-      .populate("following", "company_Name username picture");
+      .populate("followers", "company_Name username picture Economic_Sector")
+      .populate("following", "company_Name username picture Economic_Sector");
+
     const similarSector = await User.find({
       Economic_Sector: user.Economic_Sector,
     }).select("company_Name username picture");
+
+    const followersAndFollowing = [...user.followers, ...user.following];
+
     res.json({
       followers: user.followers,
       following: user.following,
       similarSector,
+      followersAndFollowing,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

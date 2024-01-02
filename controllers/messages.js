@@ -112,6 +112,7 @@ exports.sendMessage = async (req, res) => {
 exports.getMessages = async (req, res) => {
   try {
     const convo_id = req.params.convo_id;
+
     if (!convo_id) {
       return res.sendStatus(400);
     }
