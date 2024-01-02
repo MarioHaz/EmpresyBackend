@@ -12,6 +12,6 @@ const router = express.Router();
 router.post("/conversation", authUser, create_open_conversation);
 router.get("/getConversation", authUser, getConversation);
 router.get("/searchUserMessenger", authUser, searchUserMessenger);
-router.delete("/removeConversation", authUser, removeConversation);
+router.delete("/removeConversation/:id", authUser, removeConversation);
 
 module.exports = router;
