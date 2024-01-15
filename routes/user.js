@@ -31,6 +31,7 @@ const {
   getNotifications,
   getConversation,
   logeduser,
+  getNewMessages,
 } = require("../controllers/register");
 const { authUser } = require("../middlewares/auth");
 
@@ -65,5 +66,6 @@ router.post("/searchVisitor/:searchTerm", searchVisitor);
 router.get("/getFollowers", authUser, getFollowers);
 router.get("/getNotifications", authUser, getNotifications);
 router.get("/logeduser", authUser, logeduser);
+router.get("/getNewMessages", authUser, getNewMessages);
 
 module.exports = router;
