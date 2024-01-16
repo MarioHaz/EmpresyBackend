@@ -81,7 +81,7 @@ server = app.listen(PORT, () => {
 const io = new Server(server, {
   pingTimeout: 6000,
   cors: {
-    origin: "*",
+    origin: process.env.BASE_URL,
   },
 });
 
