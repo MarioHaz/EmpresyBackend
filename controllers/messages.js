@@ -42,32 +42,12 @@ newMessageTemplate = () => {
 exports.sendMessage = async (req, res) => {
   try {
     const user_id = req.user.id;
-
     const { message, convo_id, files } = req.body;
 
     if (!convo_id || (!message && !files)) {
-      console.log("error provide conversation id and message body");
+      console.log("Error: Provide conversation id and message body");
       return res.sendStatus(400);
     }
-
-    const messages = await getConvoMessages(convo_id);
-
-    let sentMessageTrue = messages.map((message) => {
-      return message.sender._id.toString() === user_id;
-    });
-
-    const isAnyTrue = sentMessageTrue.includes(true);
-
-    if (isAnyTrue) {
-      // At least one message is false, so set sentMessage to false
-      sentMessageTrue = true;
-    } else {
-      // There are no false values, so set sentMessage to true
-      sentMessageTrue = false;
-    }
-
-    console.log(sentMessageTrue);
-    console.log(user_id);
 
     const populatedConvo = await populateConversation(
       convo_id,
@@ -75,24 +55,16 @@ exports.sendMessage = async (req, res) => {
       "-password"
     );
 
-    if (sentMessageTrue === false || sentMessageTrue.length === 0) {
-      const receiver = populatedConvo.users
-        .map((profile) => {
-          if (profile._id.toString() !== user_id) {
-            return profile;
-          }
-          return null; // Return null for the user that matches user_id
-        })
-        .filter((profile) => profile !== null)[0];
+    const receiver = populatedConvo.users
+      .map((profile) => (profile._id.toString() !== user_id ? profile : null))
+      .filter((profile) => profile !== null)[0];
 
-      // Now, 'receiver' will contain the user profile that doesn't match the 'user_id'
-
-      sendEmail(
-        receiver.email,
-        "Tienes un mensaje en empresy - Quieren contactar contigo!",
-        newMessageTemplate()
-      );
-    }
+    // Send email notification regardless of whether the user has sent a message or not
+    sendEmail(
+      receiver.email,
+      "Tienes un mensaje en empresy - Quieren contactar contigo!",
+      newMessageTemplate()
+    );
 
     const msgData = {
       sender: user_id,
@@ -100,9 +72,17 @@ exports.sendMessage = async (req, res) => {
       conversation: convo_id,
       files: files || [],
     };
-    let newMessage = await createMessage(msgData);
-    let populateMessages = await populateMessage(newMessage._id);
+
+    const newMessage = await createMessage(msgData);
+    const populateMessages = await populateMessage(newMessage._id);
     await updateLatestMessage(convo_id, newMessage);
+
+    await User.findByIdAndUpdate(receiver, {
+      $push: {
+        notificationComment: req.user.id,
+      },
+    });
+
     res.json(populateMessages);
   } catch (error) {
     return res.status(500).json({ message: error.message });

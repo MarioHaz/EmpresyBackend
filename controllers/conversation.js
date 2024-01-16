@@ -72,7 +72,6 @@ exports.searchUserMessenger = async (req, res) => {
 exports.removeConversation = async (req, res) => {
   try {
     const conversationId = req.params.id; // Assuming the conversation ID is passed in the request params
-    console.log(conversationId);
 
     const conversation = await Conversation.findByIdAndRemove(conversationId);
     console.log(conversation);

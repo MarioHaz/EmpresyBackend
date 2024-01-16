@@ -134,6 +134,13 @@ const userSchema = mongoose.Schema(
         ref: "User",
       },
     ],
+
+    notificationComment: [
+      {
+        type: ObjectId,
+        ref: "User",
+      },
+    ],
     followers: [
       {
         type: ObjectId,

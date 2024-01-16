@@ -935,3 +935,16 @@ exports.logeduser = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+exports.getNewMessages = async (req, res) => {
+  try {
+    const user1 = req.user.id;
+    const user = await User.findById(req.user.id)
+      .select("notificationComment")
+      .populate("notificationComment", "company_Name username picture");
+
+    res.json(user.notificationComment);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
