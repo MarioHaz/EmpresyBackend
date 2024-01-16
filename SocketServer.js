@@ -21,11 +21,10 @@ exports.Actions = (socket, io) => {
 
   // join a conversation room
   socket.on("join conversation", (conversation) => {
-    console.log(conversation);
     socket.join(conversation);
   });
 
-  // leave a conversation room
+  // join a conversation room
   socket.on("leave conversation", (conversation) => {
     socket.leave(conversation);
   });
