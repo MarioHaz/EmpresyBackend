@@ -19,7 +19,7 @@ newMessageTemplate = () => {
   "
 >
   <span>
-    <strong>Haz recivido un "me gusta": revisa tu perfil en empresy</strong>
+    <strong>Haz recibido un "me gusta": revisa tu perfil en empresy</strong>
   </span>
 </div>
 
