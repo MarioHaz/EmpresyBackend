@@ -56,6 +56,14 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    premium: {
+      type: Boolean,
+      default: false,
+    },
+    shares: {
+      type: Number,
+      default: 0,
+    },
     friends: [
       {
         type: ObjectId,

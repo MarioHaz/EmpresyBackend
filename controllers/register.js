@@ -27,52 +27,215 @@ verificationTemplate = (user) => {
 
   const url = `${process.env.BASE_URL}/activate/${emailVerificationToken}`;
   return `
-  <div style="display:flex; margin-bottom:1rem; max-width:7; align-items:center; gap:10px; font-family:sans-serif; font-weight:600; color:#398ad5">
-    <img width="170px" src="https://res.cloudinary.com/danfiejkv/image/upload/v1681770032/Logo-empresy-web_djmfw2.png" alt="">
+  <div
+  style="
+    display: flex;
+    margin: 10px;
+    font-family: sans-serif;
+    font-weight: 600;
+    color: #36b1ff;
+    justify-content: center;
+  "
+>
+  <span>
+    <strong>Acción requerida: Activa tu cuenta de Empresy</strong>
+  </span>
+</div>
+
+<div
+  style="
+    padding: 1rem 0;
+    border-top: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
+    color: #141823;
+    font-size: 17px;
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  "
+>
+  <img
+    width="170px"
+    src="http://cdn.mcauto-images-production.sendgrid.net/9f8beee71c0a1d98/dbf12818-bf74-4d8a-ba31-7ef82f312458/4015x1200.png"
+    alt=""
+  />
+  <span style="padding: 20px">Hola ${user.company_Name}</span>
+
+  <div style="padding: 20px">
     <span>
-      <strong>Acción requerida: Activa tu cuenta de Empresy</strong>
+      Recientemente has creado una cuenta en Empresy. Para completar tu
+      registro, por favor confirma tu cuenta.
     </span>
   </div>
 
-  <div style="padding:1rem 0; border-top:1px solid #e5e5e5; border-bottom:1px solid #e5e5e5; color:#141823; font-size:17px; font-family:sans-serif">
-    <span>Hola ${user.company_Name}</span>
+  <a
+    href="${url}"
+    style="
+      width: 200px;
+      padding: 10px 15px;
+      background: #36b1ff;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      border-radius: 10px;
+      text-align: center;
+    "
+  >
+    Confirma tu cuenta </a
+  ><br />
 
-    <div style="padding:20px 0">
-      <span style="padding:1.5rem 0">
-        Recientemente has creado una cuenta en Empresy. Para completar tu registro, por favor confirma tu cuenta.
-      </span>
-    </div>
-
-    <a href=${url} style="width:200px; padding:10px 15px; background:#398ad5; color:#fff; text-decoration:none; font-weight:600; border-radius:10px">
-      Confirma tu cuenta
-    </a><br>
-
-    <div style="padding-top:20px">
-      <span style="margin:1.5rem 0; color:#898f9c">
-        Empresy te permite mantener contacto con otras empresas. Una vez registrado en Empresy, podrás compartir tus productos, contactar proveedores y mucho más.
-      </span>
-    </div>
-  </div>`;
+  <div style="padding: 20px">
+    <span style="font-size: 12px; color: #898f9c">
+      Empresy te permite mantener contacto con otras empresas. Una vez
+      registrado en Empresy, podrás compartir tus productos, contactar
+      proveedores y mucho más.
+    </span>
+  </div>
+</div>`;
 };
 
 resetPasswordTemplate = (userName, code) => {
   return `
-    <div style="display:flex; margin-bottom:1rem; max-width:100%; align-items:center; gap:10px; font-family:sans-serif; font-weight:600; color:#398ad5">
-      
-      <span>Código de restablecimiento de contraseña</span>
-    </div>
-    <div style="padding: 1rem 0; border-top: 1px solid #e5e5e5; border-bottom: 1px solid #e5e5e5; color: #141823; font-size: 17px; font-family: sans-serif">
-    
-      <span>Hola ${userName}</span>
-      <div style="padding: 20px 0">
-        <span style="padding: 1.5rem 0">Aquí tienes tu código de verificación. Sigue las instrucciones para restablecer tu contraseña.</span>
-      </div>
-      <a style="width: 200px; padding: 10px 15px; background: #398ad5; color: #fff; text-decoration: none; font-weight: 600; border-radius: 10px">${code}</a><br>
-      <div style="padding-top: 20px">
-        <span style="margin: 1.5rem 0; color: #898f9c">Empresy te permite estar en contacto con otras empresas. Una vez registrado en empresy, podrás compartir tus productos, contactar proveedores y mucho más.</span>
-      </div>
-    </div>
+  <div
+  style="
+    display: flex;
+    margin: 10px;
+    max-width: 100%;
+    align-items: center;
+    font-family: sans-serif;
+    font-weight: 600;
+    color: #36b1ff;
+    justify-content: center;
+  "
+>
+  <span>Código de restablecimiento de contraseña</span>
+</div>
+<div
+  style="
+    padding: 1rem 0;
+    border-top: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
+    color: #141823;
+    font-size: 17px;
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+    justify-content: center;
+    align-items: center;
+  "
+>
+  <img
+    style="margin: 20px"
+    width="170px"
+    src="http://cdn.mcauto-images-production.sendgrid.net/9f8beee71c0a1d98/dbf12818-bf74-4d8a-ba31-7ef82f312458/4015x1200.png"
+    alt=""
+  />
+  <span>Hola ${userName}</span>
+  <div style="margin: 20px">
+    <span
+      >Este es tu código de verificación. Sigue las instrucciones para
+      restablecer tu contraseña.</span
+    >
+  </div>
+  <a
+    style="
+      width: 200px;
+      padding: 10px 15px;
+      background: #36b1ff;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      border-radius: 10px;
+      text-align: center;
+    "
+    >${code}</a
+  ><br />
+  <div style="padding-top: 20px">
+    <span style="font-size: 12px; color: #898f9c"
+      >Empresy te permite estar en contacto con otras empresas. Una vez
+      registrado en empresy, podrás compartir tus productos, contactar
+      proveedores y mucho más.</span
+    >
+  </div>
+</div>
   `;
+};
+
+followTemplate = () => {
+  return `
+  <div
+    style="
+      display: flex;
+      margin-bottom: 1rem;
+      max-width: 100%;
+      align-items: center;
+      gap: 10px;
+      font-family: sans-serif;
+      font-weight: 600;
+      color: #36b1ff;
+      justify-content: center;
+    "
+  >
+    <span>
+      <strong
+        >Haz conseguido un nuevo seguidor: revisa tu perfil en empresy</strong
+      >
+    </span>
+  </div>
+
+  <div
+    style="
+      padding: 1rem 0;
+      border-top: 1px solid #e5e5e5;
+      border-bottom: 1px solid #e5e5e5;
+      color: #141823;
+      font-size: 17px;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    "
+  >
+    <img
+      width="170px"
+      src="http://cdn.mcauto-images-production.sendgrid.net/9f8beee71c0a1d98/dbf12818-bf74-4d8a-ba31-7ef82f312458/4015x1200.png"
+      alt=""
+    />
+    <div style="padding: 20px">
+      <span>
+        Tu empresa es todo un exito!, revisa quien te ha seguido en tu cuenta de
+        empresy, siguelo tambien y empieza a expandir tu red de contactos!
+      </span>
+    </div>
+
+    <a
+      href="https://empresy.com"
+      style="
+        width: 200px;
+        padding: 10px 15px;
+        background-color: #36b1ff;
+        color: #fff;
+        text-decoration: none;
+        font-weight: 600;
+        border-radius: 10px;
+        text-align: center;
+      "
+    >
+      Ir a empresy </a
+    ><br />
+
+    <div style="padding: 20px">
+      <span style="font-size: 12px; color: #898f9c">
+        Empresy te permite mantener contacto con otras empresas. Una vez
+        registrado en Empresy, podrás compartir tus productos, contactar
+        proveedores y mucho más.
+      </span>
+    </div>
+  </div>`;
 };
 
 exports.register = async (req, res) => {
@@ -522,6 +685,11 @@ exports.follow = async (req, res) => {
         await receiver.updateOne({
           $push: { notificationAll: sender._id },
         });
+        sendEmail(
+          receiver.email,
+          "Una nueva empresa te ha empezado a seguir! - Revisa tu perfil de empresy!",
+          followTemplate()
+        );
         await sender.updateOne({
           $push: { following: receiver._id },
         });

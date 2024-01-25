@@ -152,11 +152,62 @@ exports.deletePost = async (req, res) => {
   }
 };
 
+exports.visitorPosts = async (req, res) => {
+  try {
+    const totalPosts = await Post.countDocuments();
+
+    const newPosts = await Post.find()
+      .populate("user", "company_Name picture username Economic_Sector")
+      .sort({ createdAt: -1 }); // to the newest to the oldest the way post come
+    const posts = await Post.aggregate([
+      { $sample: { size: totalPosts } }, // Adjust the size according to your requirements
+
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      { $unwind: "$user" },
+    ]);
+
+    const interleavedPosts = [];
+    let i = 0;
+    let j = 0;
+
+    while (j < posts.length) {
+      // Push 3 random posts
+      for (let k = 0; k < 3 && j < posts.length; k++) {
+        interleavedPosts.push(posts[j]);
+        j++;
+      }
+
+      // Push 1 new post
+      if (i < newPosts.length) {
+        interleavedPosts.push(newPosts[i]);
+        i++;
+      }
+    }
+
+    // If there are remaining new posts, append them
+    while (i < newPosts.length) {
+      interleavedPosts.push(newPosts[i]);
+      i++;
+    }
+
+    res.json(interleavedPosts);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 // exports.visitorPosts = async (req, res) => {
 //   try {
-//     const countPosts = async () => {
+//     const countPosts = async (query) => {
 //       try {
-//         const postCount = await Post.countDocuments();
+//         const postCount = await Post.countDocuments(query);
 //         return postCount;
 //       } catch (error) {
 //         console.error("Error counting posts:", error);
@@ -164,85 +215,50 @@ exports.deletePost = async (req, res) => {
 //       }
 //     };
 
-//     const totalPostCount = await countPosts();
+//     const allPosts = [];
+//     let currentDate = new Date();
 
-//     const visitorPosts = await Post.aggregate([
-//       { $sample: { size: totalPostCount } }, // Set the sample size to the total post count
-//       {
-//         $lookup: {
-//           from: "users", // Assuming the user data is stored in a collection named "users"
-//           localField: "user",
-//           foreignField: "_id",
-//           as: "user",
+//     // Loop until there are no more posts
+//     while (true) {
+//       const currentQuery = {
+//         createdAt: {
+//           $gte: new Date(currentDate - 10 * 24 * 60 * 60 * 1000),
+//           $lt: new Date(currentDate),
 //         },
-//       },
-//       {
-//         $unwind: "$user",
-//       },
-//     ]);
+//       };
 
-//     res.json(visitorPosts);
+//       const totalCurrentCount = await countPosts(currentQuery);
+
+//       if (totalCurrentCount === 0) {
+//         // No more posts for the current interval
+//         break;
+//       }
+
+//       const currentPosts = await Post.aggregate([
+//         { $match: currentQuery },
+//         { $sample: { size: totalCurrentCount } },
+//         {
+//           $lookup: {
+//             from: "users",
+//             localField: "user",
+//             foreignField: "_id",
+//             as: "user",
+//           },
+//         },
+//         { $unwind: "$user" },
+//       ]);
+
+//       allPosts.push(...currentPosts);
+
+//       // Update the current date for the next iteration
+//       currentDate = new Date(currentDate - 10 * 24 * 60 * 60 * 1000);
+//     }
+
+//     res.json(allPosts);
 //   } catch (error) {
 //     return res.status(500).json({ message: error.message });
 //   }
 // };
-
-exports.visitorPosts = async (req, res) => {
-  try {
-    const countPosts = async (query) => {
-      try {
-        const postCount = await Post.countDocuments(query);
-        return postCount;
-      } catch (error) {
-        console.error("Error counting posts:", error);
-        throw error;
-      }
-    };
-
-    const allPosts = [];
-    let currentDate = new Date();
-
-    // Loop until there are no more posts
-    while (true) {
-      const currentQuery = {
-        createdAt: {
-          $gte: new Date(currentDate - 10 * 24 * 60 * 60 * 1000),
-          $lt: new Date(currentDate),
-        },
-      };
-
-      const totalCurrentCount = await countPosts(currentQuery);
-
-      if (totalCurrentCount === 0) {
-        // No more posts for the current interval
-        break;
-      }
-
-      const currentPosts = await Post.aggregate([
-        { $match: currentQuery },
-        { $sample: { size: totalCurrentCount } },
-        {
-          $lookup: {
-            from: "users",
-            localField: "user",
-            foreignField: "_id",
-            as: "user",
-          },
-        },
-        { $unwind: "$user" },
-      ]);
-
-      allPosts.push(...currentPosts);
-
-      // Update the current date for the next iteration
-      currentDate = new Date(currentDate - 10 * 24 * 60 * 60 * 1000);
-    }
-
-    res.json(allPosts);
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
-};
 
 exports.getSavedPosts = async (req, res) => {
   try {
