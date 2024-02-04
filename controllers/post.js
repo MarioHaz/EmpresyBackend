@@ -319,3 +319,61 @@ exports.getPost = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+exports.getSelectedEconomicPost = async (req, res) => {
+  try {
+    const searchTerm = req.body.economic;
+    const economicSectorUser = await User.find({
+      Economic_Sector: searchTerm,
+    }).select("_id");
+
+    const userIds = economicSectorUser.map((user) => user._id);
+
+    const usersPosts = await Post.aggregate([
+      { $match: { user: { $in: userIds } } },
+      { $sample: { size: userIds.length } }, // Adjust the size according to your requirements
+
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      { $unwind: "$user" },
+    ]);
+    res.json(usersPosts);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getSelectedEconomicPostVisitor = async (req, res) => {
+  try {
+    const searchTerm = req.body.economic;
+    const economicSectorUser = await User.find({
+      Economic_Sector: searchTerm,
+    }).select("_id");
+
+    const userIds = economicSectorUser.map((user) => user._id);
+
+    const usersPosts = await Post.aggregate([
+      { $match: { user: { $in: userIds } } },
+      { $sample: { size: userIds.length } }, // Adjust the size according to your requirements
+
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      { $unwind: "$user" },
+    ]);
+    res.json(usersPosts);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
