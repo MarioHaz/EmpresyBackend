@@ -80,9 +80,7 @@ server = app.listen(PORT, () => {
 // socket io
 const io = new Server(server, {
   pingTimeout: 6000,
-  cors: {
-    origin: process.env.BASE_URL,
-  },
+  cors: {},
 });
 
 io.on("connection", (socket) => {
