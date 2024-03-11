@@ -248,7 +248,12 @@ exports.register = async (req, res) => {
       username,
       phone_number,
       Economic_Sector,
+      code,
     } = req.body;
+
+    // Convert code to lowercase and check if it matches "fenalco"
+    const updatedCode =
+      code && code.toLowerCase() === "fenalco" ? "fenalco" : "";
 
     if (!validateEmail(email)) {
       return res.status(400).json({
@@ -291,6 +296,7 @@ exports.register = async (req, res) => {
       username: newUsername,
       Economic_Sector: Economic_Sector,
       phone_number: phone_number,
+      code: updatedCode,
     }).save();
     sendEmail(
       user.email,
@@ -311,6 +317,7 @@ exports.register = async (req, res) => {
       id: user._id,
       username: user.username,
       picture: user.picture,
+      code: user.code,
       company_Name: user.company_Name,
       token: token,
       verified: user.verified,

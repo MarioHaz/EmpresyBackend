@@ -60,6 +60,11 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    code: {
+      type: String,
+      trim: true,
+      text: true,
+    },
     shares: {
       type: Number,
       default: 0,
