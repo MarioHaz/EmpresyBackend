@@ -33,11 +33,14 @@ const productSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    name: {
+    product_name: {
       type: "string",
       required: true,
     },
-    image: { type: "string", required: true },
+    images: {
+      type: Array,
+      required: true,
+    },
     brand: { type: "string" },
     category: { type: "string", required: true },
     description: { type: "string", required: true },

@@ -10,7 +10,14 @@ exports.getAllProducts = async (req, res) => {
 };
 exports.getProductsbyType = async (req, res) => {
   try {
-    const product = await Product.find(req.params.type).sort({ createdAt: -1 }); // to the newest to the oldest the way post come
+    const type = req.params.type;
+
+    const product = await Product.find({
+      category: type,
+    }).sort({
+      createdAt: -1,
+    }); // to the newest to the oldest the way post come
+
     res.json(product);
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -18,9 +25,11 @@ exports.getProductsbyType = async (req, res) => {
 };
 exports.getProductById = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id).sort({
-      createdAt: -1,
-    }); // to the newest to the oldest the way post come
+    const product = await Product.findById(req.params.id).populate(
+      "user",
+      "company_Name picture"
+    ); // to the newest to the oldest the way post come
+
     res.json(product);
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -30,8 +39,6 @@ exports.getProductById = async (req, res) => {
 exports.createProduct = async (req, res) => {
   try {
     const product = await new Product(req.body).save();
-    await product.populate("user", "company_Name picture cover username");
-
     res.json(product);
   } catch (error) {
     return res.status(500).json({ message: error.message });
