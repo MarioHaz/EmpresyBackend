@@ -74,7 +74,6 @@ exports.removeConversation = async (req, res) => {
     const conversationId = req.params.id; // Assuming the conversation ID is passed in the request params
 
     const conversation = await Conversation.findByIdAndRemove(conversationId);
-    console.log(conversation);
 
     if (!conversation) {
       return res.status(404).json({ message: "Conversation not found" });

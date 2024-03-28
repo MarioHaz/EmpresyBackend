@@ -240,7 +240,6 @@ followTemplate = () => {
 
 exports.register = async (req, res) => {
   try {
-    console.log("register");
     const {
       company_Name,
       email,

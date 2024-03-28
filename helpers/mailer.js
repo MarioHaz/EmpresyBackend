@@ -83,8 +83,6 @@ exports.sendEmail = (toEmail, subject, html) => {
   sgMail
     .send(msg)
     .then((response) => {
-      console.log(response[0].statusCode);
-      console.log(response[0].headers);
       return response;
     })
     .catch((error) => {

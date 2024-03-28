@@ -113,7 +113,7 @@ exports.reactPost = async (req, res) => {
         },
       });
       const userPost = await User.findById(post.user);
-      console.log(userPost.email);
+
       sendEmail(
         userPost.email,
         "Una empresa se ha interesado en ti! - Haz recibido un Like en tu publicación!",

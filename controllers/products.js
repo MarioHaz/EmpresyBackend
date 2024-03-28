@@ -11,9 +11,23 @@ exports.getAllProducts = async (req, res) => {
 exports.getProductsbyType = async (req, res) => {
   try {
     const type = req.params.type;
-
     const product = await Product.find({
       category: type,
+    }).sort({
+      createdAt: -1,
+    }); // to the newest to the oldest the way post come
+
+    res.json(product);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+exports.getMyProducts = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const product = await Product.find({
+      user: userId,
     }).sort({
       createdAt: -1,
     }); // to the newest to the oldest the way post come
@@ -54,8 +68,18 @@ exports.deleteProduct = async (req, res) => {
 };
 exports.editProduct = async (req, res) => {
   try {
-    await Product.findOneAndUpdate(req.params.id);
-    res.json({ status: "ok" });
+    const { infos } = req.body;
+
+    const updated = await User.findByIdAndUpdate(
+      req.user.id,
+      {
+        details: infos,
+      },
+      {
+        new: true,
+      }
+    );
+    res.json(updated.details);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
