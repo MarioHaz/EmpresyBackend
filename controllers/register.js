@@ -205,7 +205,7 @@ verificationTemplate = (user) => {
                 <tbody>
                   <tr>
                   <td align="center" bgcolor="#36b1ff" class="inner-td" style="border-radius:6px; font-size:16px; text-align:center; background-color:inherit;">
-                    <a href="" style="background-color:#36b1ff; border:1px solid #36b1ff; border-color:#36b1ff; border-radius:10px; border-width:1px; color:#ffffff; display:inline-block; font-size:16px; font-weight:400; letter-spacing:0px; line-height:normal; padding:12px 18px 12px 18px; text-align:center; text-decoration:none; border-style:solid; font-family:arial,helvetica,sans-serif;" target="_blank">Confirmar Cuenta</a>
+                    <a href="${url}" style="background-color:#36b1ff; border:1px solid #36b1ff; border-color:#36b1ff; border-radius:10px; border-width:1px; color:#ffffff; display:inline-block; font-size:16px; font-weight:400; letter-spacing:0px; line-height:normal; padding:12px 18px 12px 18px; text-align:center; text-decoration:none; border-style:solid; font-family:arial,helvetica,sans-serif;" target="_blank">Confirmar Cuenta</a>
                   </td>
                   </tr>
                 </tbody>
@@ -419,7 +419,7 @@ resetPasswordTemplate = (userName, code) => {
   </table><table class="module" role="module" data-type="text" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;" data-muid="23b3a0fb-1b43-40d6-989d-9dad5d9dc7e7" data-mc-module-version="2019-10-22">
     <tbody>
       <tr>
-        <td style="padding:18px 40px 18px 40px; line-height:22px; text-align:inherit;" height="100%" valign="top" bgcolor="" role="module-content"><div><div style="font-family: inherit; text-align: justify"><span style="color: #141823; font-family: sans-serif; font-size: 17px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space-collapse: collapse; text-wrap: wrap; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline">Este es tu código de verificación. Sigue las instrucciones para restablecer tu contraseña.</span>&nbsp;</div><div></div></div></td>
+        <td style="padding:18px 40px 18px 40px; line-height:22px; text-align:inherit;" height="100%" valign="top" bgcolor="" role="module-content"><div><div style="font-family: inherit; text-align: justify"><span style="color: #141823; font-family: sans-serif; font-size: 17px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space-collapse: collapse; text-wrap: wrap; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline">Hola ${userName}, Este es tu código de verificación. Sigue las instrucciones para restablecer tu contraseña.</span>&nbsp;</div><div></div></div></td>
       </tr>
     </tbody>
   </table><table class="module" role="module" data-type="spacer" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;" data-muid="dbf9f541-718a-4973-9733-96be026650d1">
@@ -432,7 +432,7 @@ resetPasswordTemplate = (userName, code) => {
   </table><table class="module" role="module" data-type="text" border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;" data-muid="23b3a0fb-1b43-40d6-989d-9dad5d9dc7e7.1" data-mc-module-version="2019-10-22">
     <tbody>
       <tr>
-        <td style="padding:18px 40px 18px 40px; line-height:22px; text-align:inherit;" height="100%" valign="top" bgcolor="" role="module-content"><div><div style="font-family: inherit; text-align: center"><span style="font-size: 18px"><strong>000000</strong></span></div><div></div></div></td>
+        <td style="padding:18px 40px 18px 40px; line-height:22px; text-align:inherit;" height="100%" valign="top" bgcolor="" role="module-content"><div><div style="font-family: inherit; text-align: center"><span style="font-size: 18px"><strong>${code}</strong></span></div><div></div></div></td>
       </tr>
     </tbody>
   </table></td>
