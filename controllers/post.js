@@ -351,17 +351,26 @@ exports.getSelectedEconomicPost = async (req, res) => {
 
 exports.getSelectedEconomicPostVisitor = async (req, res) => {
   try {
-    const searchTerm = req.body.economic;
+    const { economic, items, page } = req.params;
+    const pageSize = parseInt(items, 10); // Convert items to integer with base 10
+    const pageNumber = parseInt(page, 10); // Convert page to integer with base 10
+    const skip = (pageNumber - 1) * pageSize; // Calculate the number of documents to skip
+
     const economicSectorUser = await User.find({
-      Economic_Sector: searchTerm,
+      Economic_Sector: economic,
     }).select("_id");
 
     const userIds = economicSectorUser.map((user) => user._id);
 
-    const usersPosts = await Post.aggregate([
-      { $match: { user: { $in: userIds } } },
-      { $sample: { size: userIds.length } }, // Adjust the size according to your requirements
+    const totalPosts = await Post.countDocuments({
+      user: { $in: userIds },
+      type: null,
+    });
 
+    const usersPosts = await Post.aggregate([
+      { $match: { user: { $in: userIds }, type: null } },
+      { $skip: skip }, // Skip documents based on pagination
+      { $limit: pageSize }, // Limit the number of documents returned
       {
         $lookup: {
           from: "users",
@@ -372,7 +381,7 @@ exports.getSelectedEconomicPostVisitor = async (req, res) => {
       },
       { $unwind: "$user" },
     ]);
-    res.json(usersPosts);
+    res.status(200).json({ totalPosts, usersPosts });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

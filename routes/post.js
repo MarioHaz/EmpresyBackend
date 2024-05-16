@@ -22,7 +22,7 @@ const router = express.Router();
 router.post("/createPost", authUser, createPost);
 
 router.get("/getAllPosts", authUser, getAllPosts);
-router.post("/getSelectedEconomicPost", authUser, getSelectedEconomicPost);
+router.get("/getSelectedEconomicPost", authUser, getSelectedEconomicPost);
 router.get("/getOrderedPosts", authUser, getOrderedPosts);
 router.get("/getOrderedVisitorPosts", getOrderedVisitorPosts);
 router.put("/comment", authUser, comment);
@@ -33,6 +33,9 @@ router.get("/getSavedPosts", authUser, getSavedPosts);
 router.get("/getSavedPostsMovil", authUser, getSavedPostsMovil);
 router.get("/getUserPosts", authUser, getUserPosts);
 router.put("/getPost/:id", authUser, getPost);
-router.post("/getSelectedEconomicPostVisitor", getSelectedEconomicPostVisitor);
+router.get(
+  "/getSelectedEconomicPostVisitor/:economic/:items/:page",
+  getSelectedEconomicPostVisitor
+);
 
 module.exports = router;

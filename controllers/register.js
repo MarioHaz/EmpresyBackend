@@ -18,6 +18,7 @@ const bcrypt = require("bcrypt");
 const generateCode = require("../helpers/generateCode");
 const mongoose = require("mongoose");
 const unorm = require("unorm");
+const Products = require("../models/Products");
 
 verificationTemplate = (user) => {
   const emailVerificationToken = generateToken(
@@ -557,7 +558,9 @@ exports.getProfile = async (req, res) => {
       "notificationReact.user",
       "company_Name username picture type"
     );
-    res.json({ ...profile.toObject(), post, friendship });
+    const products = await Products.find({ user: profile._id });
+
+    res.json({ ...profile.toObject(), post, products, friendship });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

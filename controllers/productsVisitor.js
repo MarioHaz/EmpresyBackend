@@ -3,7 +3,7 @@ const User = require("../models/User");
 const Post = require("../models/Post");
 const Products = require("../models/Products");
 
-exports.getAllProducts = async (req, res) => {
+exports.getAllProductsVisitor = async (req, res) => {
   try {
     const { items, page } = req.params;
     const pageSize = parseInt(items, 10); // Convert items to integer with base 10
@@ -20,7 +20,7 @@ exports.getAllProducts = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-exports.getProductsbyType = async (req, res) => {
+exports.getProductsbyTypeVisitor = async (req, res) => {
   try {
     const type = req.params.type;
     const product = await Product.find({
@@ -34,7 +34,7 @@ exports.getProductsbyType = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-exports.getMyProducts = async (req, res) => {
+exports.getMyProductsVisitor = async (req, res) => {
   try {
     const { items, page } = req.params;
     const pageSize = parseInt(items, 10); // Convert items to integer with base 10
@@ -55,7 +55,7 @@ exports.getMyProducts = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-exports.getProductById = async (req, res) => {
+exports.getProductByIdVisitor = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id).populate(
       "user",
@@ -68,7 +68,7 @@ exports.getProductById = async (req, res) => {
   }
 };
 
-exports.createProduct = async (req, res) => {
+exports.createProductVisitor = async (req, res) => {
   try {
     const product = await new Product(req.body).save();
     res.status(200).json(product);
@@ -76,7 +76,7 @@ exports.createProduct = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-exports.deleteProduct = async (req, res) => {
+exports.deleteProductVisitor = async (req, res) => {
   try {
     await Product.findByIdAndRemove(req.params.id);
     res.json({ status: "ok" });
@@ -84,7 +84,7 @@ exports.deleteProduct = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-exports.editProduct = async (req, res) => {
+exports.editProductVistor = async (req, res) => {
   try {
     const { infos } = req.body;
 
@@ -103,7 +103,7 @@ exports.editProduct = async (req, res) => {
   }
 };
 
-exports.getCompany = async (req, res) => {
+exports.getCompanyVisitor = async (req, res) => {
   try {
     const { economic, items, page } = req.params;
     const pageSize = parseInt(items, 10); // Convert items to integer with base 10
@@ -125,7 +125,7 @@ exports.getCompany = async (req, res) => {
   }
 };
 
-exports.getSectorProducts = async (req, res) => {
+exports.getSectorProductsVisitor = async (req, res) => {
   try {
     const { economic, category, items, page } = req.params;
     const pageSize = parseInt(items, 10); // Convert items to integer with base 10
@@ -164,7 +164,7 @@ exports.getSectorProducts = async (req, res) => {
   }
 };
 
-exports.getSectorOffer = async (req, res) => {
+exports.getSectorOfferVisitor = async (req, res) => {
   try {
     const { economic, category, items, page } = req.params;
     const pageSize = parseInt(items, 10); // Convert items to integer with base 10
@@ -196,7 +196,7 @@ exports.getSectorOffer = async (req, res) => {
   }
 };
 
-exports.getPost = async (req, res) => {
+exports.getPostVisitor = async (req, res) => {
   try {
     const product = await Post.findById(req.params.id).populate(
       "user",
@@ -208,7 +208,7 @@ exports.getPost = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-exports.getCategoryProducts = async (req, res) => {
+exports.getCategoryProductsVisitor = async (req, res) => {
   try {
     const { category, items, page } = req.params;
     const pageSize = parseInt(items, 10); // Convert items to integer with base 10

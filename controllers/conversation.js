@@ -23,7 +23,7 @@ exports.create_open_conversation = async (req, res) => {
       receiver_id
     );
     if (existed_conversation) {
-      res.json(existed_conversation);
+      res.status(200).json(existed_conversation);
     } else {
       //let receiver_user = await User.findById(receiver_id);
       let convoData = {
