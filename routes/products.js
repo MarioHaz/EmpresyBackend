@@ -1,6 +1,7 @@
 const express = require("express");
 const {
   getAllProducts,
+  getSector,
   getProductsbyType,
   getProductById,
   createProduct,
@@ -13,24 +14,12 @@ const {
   getSectorOffer,
   getCategoryProducts,
 } = require("../controllers/products");
-const {
-  getAllProductsVisitor,
-  getProductsbyTypeVisitor,
-  getProductByIdVisitor,
-  createProductVisitor,
-  deleteProductVisitor,
-  editProductVisitor,
-  getMyProductsVisitor,
-  getCompanyVisitor,
-  getPostVisitor,
-  getSectorProductsVisitor,
-  getSectorOfferVisitor,
-  getCategoryProductsVisitor,
-} = require("../controllers/productsVisitor");
+
 const { authUser } = require("../middlewares/auth");
 
 const router = express.Router();
 router.get("/getAllProducts/:items/:page", authUser, getAllProducts);
+router.get("/getSector/:sector/:items/:page", authUser, getSector);
 router.get("/getMyProducts/:items/:page", authUser, getMyProducts);
 router.get("/getProductById/:id", authUser, getProductById);
 router.get("/getProductsbyType/:type", authUser, getProductsbyType);
@@ -53,30 +42,6 @@ router.get(
   "/getSectorOffer/:economic/:category/:items/:page",
   authUser,
   getSectorOffer
-);
-router.get("/getAllProductsVisitor/:items/:page", getAllProductsVisitor);
-router.get("/getMyProductsVisitor/:items/:page", getMyProductsVisitor);
-router.get("/getProductByIdVisitor/:id", getProductByIdVisitor);
-router.get("/getProductsbyTypeVisitor/:type", getProductsbyTypeVisitor);
-router.post("/createProductVisitor", createProductVisitor);
-router.delete("/deleteProductvisitor/:id", deleteProductVisitor);
-router.put("/editProduct", editProduct);
-router.get("/getCompanyVisitor/:economic/:items/:page", getCompanyVisitor);
-router.get(
-  "/getSectorProductsVisitor/:economic/:category/:items/:page",
-  authUser,
-  getSectorProductsVisitor
-);
-router.get(
-  "/getCategoryProductsVisitor/:category/:items/:page",
-  authUser,
-  getCategoryProductsVisitor
-);
-router.get("/getPostVisitor/:id", authUser, getPostVisitor);
-router.get(
-  "/getSectorOfferVisitor/:economic/:category/:items/:page",
-  authUser,
-  getSectorOfferVisitor
 );
 
 module.exports = router;

@@ -20,6 +20,45 @@ exports.getAllProducts = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+exports.getSector = async (req, res) => {
+  try {
+    const { sector, items, page } = req.params;
+    const pageSize = parseInt(items, 10); // Convert items to integer with base 10
+    const pageNumber = parseInt(page, 10); // Convert page to integer with base 10
+    const skip = (pageNumber - 1) * pageSize; // Calculate the number of documents to skip
+
+    const economicSectorUser = await User.find({
+      Economic_Sector: sector,
+    }).select("_id");
+
+    const userIds = economicSectorUser.map((user) => user._id);
+
+    const totalProducts = await Products.countDocuments({
+      user: { $in: userIds },
+      type: null,
+    });
+
+    const sectorProducts = await Products.aggregate([
+      { $match: { user: { $in: userIds }, type: null } },
+      { $skip: skip }, // Skip documents based on pagination
+      { $limit: pageSize }, // Limit the number of documents returned
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      { $unwind: "$user" },
+    ]);
+    res.status(200).json({ totalProducts, sectorProducts });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 exports.getProductsbyType = async (req, res) => {
   try {
     const type = req.params.type;
