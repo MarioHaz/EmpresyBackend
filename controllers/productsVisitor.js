@@ -20,6 +20,46 @@ exports.getAllProductsVisitor = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+exports.getSectorVisitor = async (req, res) => {
+  try {
+    const { sector, items, page } = req.params;
+
+    const pageSize = parseInt(items, 10); // Convert items to integer with base 10
+    const pageNumber = parseInt(page, 10); // Convert page to integer with base 10
+    const skip = (pageNumber - 1) * pageSize; // Calculate the number of documents to skip
+
+    const economicSectorUser = await User.find({
+      Economic_Sector: sector,
+    }).select("_id");
+
+    const userIds = economicSectorUser.map((user) => user._id);
+
+    const totalProducts = await Products.countDocuments({
+      user: { $in: userIds },
+      type: null,
+    });
+
+    const sectorProducts = await Products.aggregate([
+      { $match: { user: { $in: userIds }, type: null } },
+      { $skip: skip }, // Skip documents based on pagination
+      { $limit: pageSize }, // Limit the number of documents returned
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      { $unwind: "$user" },
+    ]);
+    res.status(200).json({ totalProducts, sectorProducts });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 exports.getProductsbyTypeVisitor = async (req, res) => {
   try {
     const type = req.params.type;
@@ -34,27 +74,7 @@ exports.getProductsbyTypeVisitor = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-exports.getMyProductsVisitor = async (req, res) => {
-  try {
-    const { items, page } = req.params;
-    const pageSize = parseInt(items, 10); // Convert items to integer with base 10
-    const pageNumber = parseInt(page, 10); // Convert page to integer with base 10
-    const skip = (pageNumber - 1) * pageSize; // Calculate the number of documents to skip
-    const userId = req.user.id;
 
-    const totalProducts = await Product.countDocuments({
-      user: { $in: userId },
-    });
-
-    const userProducts = await Products.find({ user: userId })
-      .skip(skip)
-      .limit(pageSize);
-
-    res.status(200).json({ totalProducts, userProducts });
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
-};
 exports.getProductByIdVisitor = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id).populate(
@@ -70,34 +90,13 @@ exports.getProductByIdVisitor = async (req, res) => {
 
 exports.createProductVisitor = async (req, res) => {
   try {
-    const product = await new Product(req.body).save();
-    res.status(200).json(product);
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
-};
-exports.deleteProductVisitor = async (req, res) => {
-  try {
-    await Product.findByIdAndRemove(req.params.id);
-    res.json({ status: "ok" });
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
-};
-exports.editProductVistor = async (req, res) => {
-  try {
-    const { infos } = req.body;
-
-    const updated = await User.findByIdAndUpdate(
-      req.user.id,
-      {
-        details: infos,
-      },
-      {
-        new: true,
-      }
+    const productCreate = await new Product(req.body).save();
+    const product_id = productCreate._id;
+    const product = await Product.findById(product_id).populate(
+      "user",
+      "company_Name picture username"
     );
-    res.json(updated.details);
+    res.status(200).json(product);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

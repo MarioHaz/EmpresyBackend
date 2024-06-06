@@ -24,6 +24,7 @@ exports.getAllProducts = async (req, res) => {
 exports.getSector = async (req, res) => {
   try {
     const { sector, items, page } = req.params;
+
     const pageSize = parseInt(items, 10); // Convert items to integer with base 10
     const pageNumber = parseInt(page, 10); // Convert page to integer with base 10
     const skip = (pageNumber - 1) * pageSize; // Calculate the number of documents to skip
@@ -109,7 +110,12 @@ exports.getProductById = async (req, res) => {
 
 exports.createProduct = async (req, res) => {
   try {
-    const product = await new Product(req.body).save();
+    const productCreate = await new Product(req.body).save();
+    const product_id = productCreate._id;
+    const product = await Product.findById(product_id).populate(
+      "user",
+      "company_Name picture username"
+    );
     res.status(200).json(product);
   } catch (error) {
     return res.status(500).json({ message: error.message });

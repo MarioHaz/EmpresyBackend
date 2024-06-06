@@ -860,6 +860,44 @@ exports.getProfile = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+exports.getProfileVisitor = async (req, res) => {
+  try {
+    const { username } = req.params;
+
+    const profile = await User.findOne({ username }).select("-password");
+
+    const post = await Post.find({ user: profile._id })
+      .populate("user")
+      .populate(
+        "comments.commentBy",
+        "company_Name picture username commentAt "
+      )
+      .sort({ createdAt: -1 });
+    await profile.populate("followers", "company_Name username picture");
+    await profile.populate("following", "company_Name username picture");
+    await profile.populate(
+      "notificationFollowing.user",
+      "company_Name username picture"
+    );
+    await profile.populate(
+      "notificationAll",
+      "company_Name username picture type"
+    );
+    await profile.populate(
+      "notificationComment.user",
+      "company_Name username picture type"
+    );
+    await profile.populate(
+      "notificationReact.user",
+      "company_Name username picture type"
+    );
+    const products = await Products.find({ user: profile._id });
+
+    res.json({ ...profile.toObject(), post, products });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 exports.updateProfilePicture = async (req, res) => {
   try {
     const { url } = req.body;
@@ -1161,7 +1199,7 @@ exports.search = async (req, res) => {
     // Split the searchTerm into words
 
     // Check if there are at least three words in the input
-    if (searchTerm.length < 3) {
+    if (searchTerm.length < 1) {
       return res.json([]); // Return an empty array if less than three words
     }
     const regex = new RegExp(`.*${diacriticSensitiveRegex(searchTerm)}.*`, "i"); // Create a case-insensitive regex

@@ -32,6 +32,7 @@ const {
   getConversation,
   logeduser,
   getNewMessages,
+  getProfileVisitor,
 } = require("../controllers/register");
 const { authUser } = require("../middlewares/auth");
 
@@ -47,6 +48,7 @@ router.post("/validateResetCode", validateResetCode);
 router.post("/changePassword", changePassword);
 router.post("/refreshtoken", refreshtoken);
 router.get("/getProfile/:username", authUser, getProfile);
+router.get("/getProfileVisitor/:username", getProfileVisitor);
 router.put("/updateProfilePicture", authUser, updateProfilePicture);
 router.put("/updateCover", authUser, updateCover);
 router.put("/updateAbout", authUser, updateAbout);
