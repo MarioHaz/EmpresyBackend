@@ -544,6 +544,7 @@ exports.register = async (req, res) => {
       phone_number,
       Economic_Sector,
       code,
+      currentCity,
     } = req.body;
 
     // Convert code to lowercase and check if it matches "fenalco"
@@ -592,6 +593,7 @@ exports.register = async (req, res) => {
       Economic_Sector: Economic_Sector,
       phone_number: phone_number,
       code: updatedCode,
+      details: { currentCity },
     }).save();
     sendEmail(
       user.email,
