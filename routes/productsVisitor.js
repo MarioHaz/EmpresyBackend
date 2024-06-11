@@ -15,7 +15,7 @@ const {
 
 const router = express.Router();
 
-router.get("/getAllProductsVisitor/:items/:page", getAllProductsVisitor);
+router.post("/getAllProductsVisitor/:items/:page", getAllProductsVisitor);
 router.get("/getProductByIdVisitor/:id", getProductByIdVisitor);
 router.get("/getProductsbyTypeVisitor/:type", getProductsbyTypeVisitor);
 router.post("/createProductVisitor", createProductVisitor);
