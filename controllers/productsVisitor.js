@@ -7,18 +7,53 @@ const stringSimilarity = require("string-similarity");
 exports.getAllProductsVisitor = async (req, res) => {
   try {
     const { items, page } = req.params;
+    const { visitorLocation } = req.body;
     const pageSize = parseInt(items, 10);
     const pageNumber = parseInt(page, 10);
     const skip = (pageNumber - 1) * pageSize;
 
     let totalProducts, productss;
 
-    totalProducts = await Product.countDocuments();
-    productss = await Product.find()
-      .populate("user", "company_Name picture username")
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(pageSize);
+    if (!visitorLocation) {
+      totalProducts = await Product.countDocuments();
+      productss = await Product.find()
+        .populate("user", "company_Name picture username")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(pageSize);
+    } else {
+      // Fetch all users to apply string similarity check
+      const allUsers = await User.find();
+
+      // Calculate similarity scores
+      const usersWithSimilarity = allUsers.map((user) => {
+        const similarity = stringSimilarity.compareTwoStrings(
+          visitorLocation.toLowerCase(),
+          (user.details.currentCity || "").toLowerCase()
+        );
+        return { user, similarity };
+      });
+
+      // Sort users by similarity score in descending order
+      usersWithSimilarity.sort((a, b) => b.similarity - a.similarity);
+
+      // Filter users based on the similarity threshold
+      const similarUsers = usersWithSimilarity
+        .filter((entry) => entry.similarity >= 0.4)
+        .map((entry) => entry.user);
+
+      const userIds = similarUsers.map((user) => user._id);
+
+      // Count products from these users
+      totalProducts = await Product.countDocuments({ user: { $in: userIds } });
+
+      // Fetch products from these users with pagination
+      productss = await Product.find({ user: { $in: userIds } })
+        .populate("user", "company_Name picture username")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(pageSize);
+    }
 
     res.status(200).json({ totalProducts, productss });
   } catch (error) {
