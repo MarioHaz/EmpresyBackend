@@ -209,6 +209,24 @@ const userSchema = mongoose.Schema(
         text: true,
       },
     },
+    location: {
+      city: {
+        type: String,
+        text: true,
+      },
+      region: {
+        type: String,
+        text: true,
+      },
+      country: {
+        type: String,
+        text: true,
+      },
+      zip: {
+        type: String,
+        text: true,
+      },
+    },
     SavedPosts: [
       {
         post: {

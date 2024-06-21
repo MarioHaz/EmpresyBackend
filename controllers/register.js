@@ -544,7 +544,7 @@ exports.register = async (req, res) => {
       phone_number,
       Economic_Sector,
       code,
-      currentCity,
+      location,
     } = req.body;
 
     // Convert code to lowercase and check if it matches "fenalco"
@@ -593,7 +593,7 @@ exports.register = async (req, res) => {
       Economic_Sector: Economic_Sector,
       phone_number: phone_number,
       code: updatedCode,
-      details: { currentCity },
+      location: location,
     }).save();
     sendEmail(
       user.email,
@@ -624,6 +624,7 @@ exports.register = async (req, res) => {
       notificationAll: user.notificationAll,
       notificationComment: user.notificationComment,
       notificationReact: user.notificationReact,
+      location: user.location,
       message: "Registro exitoso! por favor verifica tu cuenta para comenzar",
     });
   } catch (error) {
@@ -702,6 +703,7 @@ exports.login = async (req, res) => {
       notificationAll: user.notificationAll,
       notificationComment: user.notificationComment,
       notificationReact: user.notificationReact,
+      location: user.location,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -926,18 +928,19 @@ exports.updateCover = async (req, res) => {
 
 exports.updateAbout = async (req, res) => {
   try {
-    const { infos } = req.body;
+    const { infos, userLocation } = req.body;
 
     const updated = await User.findByIdAndUpdate(
       req.user.id,
       {
         details: infos,
+        location: userLocation,
       },
       {
         new: true,
       }
     );
-    res.json(updated.details);
+    res.json(updated);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
