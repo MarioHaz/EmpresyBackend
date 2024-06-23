@@ -11,7 +11,7 @@ exports.getAllProducts = async (req, res) => {
     const skip = (pageNumber - 1) * pageSize; // Calculate the number of documents to skip
     const totalProducts = await Product.countDocuments();
     const product = await Product.find()
-      .populate("user", "company_Name picture username")
+      .populate("user", "company_Name picture username location")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(pageSize); // to the newest to the oldest the way post come

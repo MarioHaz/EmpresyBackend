@@ -17,7 +17,7 @@ exports.getAllProductsVisitor = async (req, res) => {
     if (!visitorLocation) {
       totalProducts = await Product.countDocuments();
       productss = await Product.find()
-        .populate("user", "company_Name picture username")
+        .populate("user", "company_Name picture username location")
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(pageSize);
