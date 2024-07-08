@@ -582,7 +582,7 @@ exports.register = async (req, res) => {
 
     const cryptedPassword = await bcrypt.hash(password, 12);
 
-    let tempUsername = company_Name;
+    let tempUsername = company_Name.replace(/\s+/g, "-").toLowerCase();
     let newUsername = await validateUsername(tempUsername);
 
     const user = await new User({
@@ -677,12 +677,6 @@ exports.login = async (req, res) => {
       { id: user._id.toString() },
       "30d"
     );
-
-    res.cookie("refreshtoken", refresh_token, {
-      httpOnly: true,
-      path: "/refreshtoken",
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-    });
 
     await user.populate(
       "notificationFollowing.user notificationAll notificationComment.user notificationReact.user",
