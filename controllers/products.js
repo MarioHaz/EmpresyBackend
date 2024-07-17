@@ -99,7 +99,7 @@ exports.getProductById = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id).populate(
       "user",
-      "company_Name picture username"
+      "company_Name picture username phone_number"
     ); // to the newest to the oldest the way post come
 
     res.status(200).json(product);
